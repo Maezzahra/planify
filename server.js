@@ -5,6 +5,7 @@ import "dotenv/config";
 import routerExterne from "./routes.js";
 
 // Importation des fichiers et librairies
+import { engine } from "express-handlebars";
 import express, { json } from "express";
 import helmet from "helmet";
 import compression from "compression";
@@ -13,6 +14,15 @@ import cspOption from "./csp-options.js";
 
 // Crréation du serveur express
 const app = express();
+app.engine("handlebars", engine({
+    helpers: {
+        eq: function (v1, v2) {
+            return v1 === v2;
+        }
+    }
+})); // Moteur de rendu
+app.set("view engine", "handlebars"); // Pour indiquer que les vues seront des fichiers .handlebars
+app.set("views", "./views"); // Pour indique le dossier contenant les vues
 
 // Ajout de middlewares
 app.use(helmet(cspOption));
@@ -29,8 +39,8 @@ app.use(routerExterne);
 
 // Renvoyer une erreur 404 pour les routes non définies
 app.use((request, response) => {
- // Renvoyer simplement une chaîne de caractère indiquant que la page n'existe pas
- response.status(404).send(`${request.originalUrl} Route introuvable.`);
+    // Renvoyer simplement une chaîne de caractère indiquant que la page n'existe pas
+    response.status(404).send(`${request.originalUrl} Route introuvable.`);
 });
 
 //Démarrage du serveur

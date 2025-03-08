@@ -1,0 +1,85 @@
+<div class="board-container">
+    <h1>Tableau de bord</h1>
+    
+    <!-- Formulaire pour ajouter des tâches -->
+    <div class="add-task-form">
+        <form id="todo-form" method="POST">
+            <div class="form-group">
+                <input
+                    type="text"
+                    id="todo-input"
+                    name="title"
+                    placeholder="Titre de la tâche"
+                    required
+                />
+            </div>
+            <div class="form-group">
+                <textarea
+                    id="todo-description"
+                    name="description"
+                    placeholder="Description de la tâche (optionnel)"
+                ></textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit">Ajouter une tâche</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Colonnes du tableau -->
+    <div class="board">
+        <!-- Colonne "À faire" -->
+        <div class="column">
+            <h2>À faire</h2>
+            <ul class="task-list" data-status="A faire">
+                {{#each todos}}
+                    {{#if (eq this.status "A faire")}}
+                        <li class="todo-item" draggable="true" data-id="{{this.id}}">
+                            <div class="card-content">
+                                <h3 class="title">{{this.title}}</h3>
+                                <p class="description">{{this.description}}</p>
+                                <button class="delete-btn">×</button>
+                            </div>
+                        </li>
+                    {{/if}}
+                {{/each}}
+            </ul>
+        </div>
+
+        <!-- Colonne "En cours" -->
+        <div class="column">
+            <h2>En cours</h2>
+            <ul class="task-list" data-status="En progres">
+                {{#each todos}}
+                    {{#if (eq this.status "En progres")}}
+                        <li class="todo-item" draggable="true" data-id="{{this.id}}">
+                            <div class="card-content">
+                                <h3 class="title">{{this.title}}</h3>
+                                <p class="description">{{this.description}}</p>
+                                <button class="delete-btn">×</button>
+                            </div>
+                        </li>
+                    {{/if}}
+                {{/each}}
+            </ul>
+        </div>
+
+        <!-- Colonne "Terminé" -->
+        <div class="column">
+            <h2>Terminé</h2>
+            <ul class="task-list" data-status="Fait">
+                {{#each todos}}
+                    {{#if (eq this.status "Fait")}}
+                        <li class="todo-item" draggable="true" data-id="{{this.id}}">
+                            <div class="card-content">
+                                <h3 class="title">{{this.title}}</h3>
+                                <p class="description">{{this.description}}</p>
+                                <button class="delete-btn">×</button>
+                            </div>
+                        </li>
+                    {{/if}}
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+</div>

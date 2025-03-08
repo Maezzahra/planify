@@ -1,0 +1,25 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        {{#each styles}}
+            <link rel="stylesheet" href={{this}} />
+        {{/each}}
+
+        {{#each scripts}}
+            <script src={{this}} type="module"></script>
+        {{/each}}
+
+        <title>{{titre}}</title>
+    </head>
+    <body>
+        <header> Planify</header>
+        <a href="/">Accueil</a>
+        <a href="/contact">Contact</a>
+        <main>
+            {{{body}}}
+        </main>
+        <footer>&copy; Fatima ezzahra El kanouni </footer>
+    </body>
+</html>

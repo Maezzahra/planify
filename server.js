@@ -18,6 +18,20 @@ app.engine("handlebars", engine({
     helpers: {
         eq: function (v1, v2) {
             return v1 === v2;
+        },
+        toLowerCase: function(str) {
+            return str.toLowerCase();
+        },
+        formatDate: function(timestamp) {
+            if (!timestamp) return '';
+            const date = new Date(Number(timestamp));
+            return date.toLocaleString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
         }
     }
 })); // Moteur de rendu

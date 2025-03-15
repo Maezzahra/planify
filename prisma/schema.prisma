@@ -15,6 +15,9 @@ model Todo {
   title       String
   description String?
   status      String   @default("A faire")
+  priority    String   @default("Moyenne")  // Faible, Moyenne, Élevée
+  dueDate     BigInt?  // EPOCH timestamp in milliseconds
+  assignedTo  String?  // Team member name/identifier
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

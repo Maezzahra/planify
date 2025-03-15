@@ -21,6 +21,37 @@
                 ></textarea>
             </div>
             <div class="form-group">
+                <select id="todo-priority" name="priority" required>
+                    <option value="Faible">Faible</option>
+                    <option value="Moyenne" selected>Moyenne</option>
+                    <option value="Élevée">Élevée</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input
+                    type="datetime-local"
+                    id="todo-due-date"
+                    name="dueDate"
+                    required
+                />
+            </div>
+            <div class="form-group">
+                <input
+                    type="text"
+                    id="todo-assigned-to"
+                    name="assignedTo"
+                    placeholder="Assigné à"
+                />
+            </div>
+            <div class="form-group">
+                <select id="todo-status" name="status" required>
+                    <option value="A faire" selected>À faire</option>
+                    <option value="En cours">En cours</option>
+                    <option value="En revision">En révision</option>
+                    <option value="Terminee">Terminée</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <button type="submit">Ajouter une tâche</button>
             </div>
         </form>
@@ -38,7 +69,16 @@
                             <div class="card-content">
                                 <h3 class="title">{{this.title}}</h3>
                                 <p class="description">{{this.description}}</p>
-                                <button class="delete-btn">×</button>
+                                <div class="task-details">
+                                    <span class="priority priority-{{toLowerCase this.priority}}">{{this.priority}}</span>
+                                    {{#if this.dueDate}}
+                                        <span class="due-date">Échéance: {{formatDate this.dueDate}}</span>
+                                    {{/if}}
+                                    {{#if this.assignedTo}}
+                                        <span class="assigned-to">Assigné à: {{this.assignedTo}}</span>
+                                    {{/if}}
+                                </div>
+                                <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
                             </div>
                         </li>
                     {{/if}}
@@ -49,14 +89,50 @@
         <!-- Colonne "En cours" -->
         <div class="column">
             <h2>En cours</h2>
-            <ul class="task-list" data-status="En progres">
+            <ul class="task-list" data-status="En cours">
                 {{#each todos}}
-                    {{#if (eq this.status "En progres")}}
+                    {{#if (eq this.status "En cours")}}
                         <li class="todo-item" draggable="true" data-id="{{this.id}}">
                             <div class="card-content">
                                 <h3 class="title">{{this.title}}</h3>
                                 <p class="description">{{this.description}}</p>
-                                <button class="delete-btn">×</button>
+                                <div class="task-details">
+                                    <span class="priority priority-{{toLowerCase this.priority}}">{{this.priority}}</span>
+                                    {{#if this.dueDate}}
+                                        <span class="due-date">Échéance: {{formatDate this.dueDate}}</span>
+                                    {{/if}}
+                                    {{#if this.assignedTo}}
+                                        <span class="assigned-to">Assigné à: {{this.assignedTo}}</span>
+                                    {{/if}}
+                                </div>
+                                <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                            </div>
+                        </li>
+                    {{/if}}
+                {{/each}}
+            </ul>
+        </div>
+
+        <!-- Colonne "En révision" -->
+        <div class="column">
+            <h2>En révision</h2>
+            <ul class="task-list" data-status="En revision">
+                {{#each todos}}
+                    {{#if (eq this.status "En revision")}}
+                        <li class="todo-item" draggable="true" data-id="{{this.id}}">
+                            <div class="card-content">
+                                <h3 class="title">{{this.title}}</h3>
+                                <p class="description">{{this.description}}</p>
+                                <div class="task-details">
+                                    <span class="priority priority-{{toLowerCase this.priority}}">{{this.priority}}</span>
+                                    {{#if this.dueDate}}
+                                        <span class="due-date">Échéance: {{formatDate this.dueDate}}</span>
+                                    {{/if}}
+                                    {{#if this.assignedTo}}
+                                        <span class="assigned-to">Assigné à: {{this.assignedTo}}</span>
+                                    {{/if}}
+                                </div>
+                                <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
                             </div>
                         </li>
                     {{/if}}
@@ -67,14 +143,23 @@
         <!-- Colonne "Terminé" -->
         <div class="column">
             <h2>Terminé</h2>
-            <ul class="task-list" data-status="Fait">
+            <ul class="task-list" data-status="Terminee">
                 {{#each todos}}
-                    {{#if (eq this.status "Fait")}}
+                    {{#if (eq this.status "Terminee")}}
                         <li class="todo-item" draggable="true" data-id="{{this.id}}">
                             <div class="card-content">
                                 <h3 class="title">{{this.title}}</h3>
                                 <p class="description">{{this.description}}</p>
-                                <button class="delete-btn">×</button>
+                                <div class="task-details">
+                                    <span class="priority priority-{{toLowerCase this.priority}}">{{this.priority}}</span>
+                                    {{#if this.dueDate}}
+                                        <span class="due-date">Échéance: {{formatDate this.dueDate}}</span>
+                                    {{/if}}
+                                    {{#if this.assignedTo}}
+                                        <span class="assigned-to">Assigné à: {{this.assignedTo}}</span>
+                                    {{/if}}
+                                </div>
+                                <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
                             </div>
                         </li>
                     {{/if}}

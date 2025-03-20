@@ -78,7 +78,12 @@
                                         <span class="assigned-to">Assigné à: {{this.assignedTo}}</span>
                                     {{/if}}
                                 </div>
-                                <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                <div class="task-actions">
+                                    <button class="history-btn" type="button" aria-label="Voir l'historique" data-id="{{this.id}}">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                </div>
                             </div>
                         </li>
                     {{/if}}
@@ -105,7 +110,12 @@
                                         <span class="assigned-to">Assigné à: {{this.assignedTo}}</span>
                                     {{/if}}
                                 </div>
-                                <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                <div class="task-actions">
+                                    <button class="history-btn" type="button" aria-label="Voir l'historique" data-id="{{this.id}}">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                </div>
                             </div>
                         </li>
                     {{/if}}
@@ -132,7 +142,12 @@
                                         <span class="assigned-to">Assigné à: {{this.assignedTo}}</span>
                                     {{/if}}
                                 </div>
-                                <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                <div class="task-actions">
+                                    <button class="history-btn" type="button" aria-label="Voir l'historique" data-id="{{this.id}}">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                </div>
                             </div>
                         </li>
                     {{/if}}
@@ -159,7 +174,12 @@
                                         <span class="assigned-to">Assigné à: {{this.assignedTo}}</span>
                                     {{/if}}
                                 </div>
-                                <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                <div class="task-actions">
+                                    <button class="history-btn" type="button" aria-label="Voir l'historique" data-id="{{this.id}}">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                </div>
                             </div>
                         </li>
                     {{/if}}
@@ -168,3 +188,36 @@
         </div>
     </div>
 </div>
+
+<!-- Modale pour l'historique -->
+<div id="history-modal" class="modal">
+    <div class="modal-content">
+        <!-- Le contenu sera injecté dynamiquement par JavaScript -->
+    </div>
+</div>
+
+<style>
+/* Styles pour les boutons d'action */
+.task-actions {
+    display: flex;
+    gap: 8px;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.history-btn {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 16px;
+}
+
+.history-btn:hover {
+    color: #333;
+}
+</style>
+
+<script src="/js/history.js"></script>

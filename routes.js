@@ -1,16 +1,25 @@
 import { Router } from "express";
-import { addTodo, getTodos, updateTodo, updateTodoStatus, deleteTodo } from "./model/todo.js";
+import { 
+    addTodo, 
+    getTodos, 
+    updateTodo, 
+    updateTodoStatus, 
+    deleteTodo, 
+    getTodoHistory, 
+    getStatuses, 
+    getPriorities 
+} from "./model/todo.js";
 
 const router = Router();
 
-//Definition des routes
+//Définition des routes
 // Route pour la page d'accueil
 router.get("/", async (request, response) => {
     response.render("index", {
         titre: "Accueil",
-        styles: ["./css/style.css", "./css/index.css"],
+        styles: ["./css/style.css", "./css/index.css", "./css/modal.css"],
         scripts: ["./js/main.js"],
-        todos: await getTodos(),
+        taches: await getTodos(),
     });
 });
 
@@ -23,7 +32,7 @@ router.get("/document", (request, response) => {
     });
 });
 
-// Route pour obtenir la liste des taches
+// Route pour obtenir la liste des tâches
 router.get("/api/todos", async (request, response) => {
     try {
         const todos = await getTodos();
@@ -33,38 +42,58 @@ router.get("/api/todos", async (request, response) => {
     }
 });
 
-// Route pour ajouter une tache
+// Route pour obtenir tous les statuts
+router.get("/api/statuses", async (request, response) => {
+    try {
+        const statuses = await getStatuses();
+        return response.status(200).json(statuses);
+    } catch (error) {
+        return response.status(500).json({ error: error.message });
+    }
+});
+
+// Route pour obtenir toutes les priorités
+router.get("/api/priorities", async (request, response) => {
+    try {
+        const priorities = await getPriorities();
+        return response.status(200).json(priorities);
+    } catch (error) {
+        return response.status(500).json({ error: error.message });
+    }
+});
+
+// Route pour ajouter une tâche
 router.post("/api/todo", async (request, response) => {
     try {
-        const { title, description, priority, dueDate, assignedTo, status } = request.body;
-        console.log("Données reçues:", { title, description, priority, dueDate, assignedTo, status });
+        const { titre, description, priorite, dateEcheance, assigneA, statut } = request.body;
+        console.log("Données reçues:", { titre, description, priorite, dateEcheance, assigneA, statut });
 
-        if (!title || title.trim() === "") {
+        if (!titre || titre.trim() === "") {
             return response.status(400).json({ error: "Le titre est requis" });
         }
 
         // Validation de la priorité
-        if (priority && !["Faible", "Moyenne", "Élevée"].includes(priority)) {
+        if (priorite && !["Faible", "Moyenne", "Élevée"].includes(priorite)) {
             return response.status(400).json({ error: "Priorité invalide" });
         }
 
-        console.log("Conversion de la date:", dueDate);
-        const dueDateBigInt = dueDate ? BigInt(dueDate) : null;
-        console.log("Date convertie:", dueDateBigInt);
+        console.log("Conversion de la date:", dateEcheance);
+        const dateEcheanceBigInt = dateEcheance ? BigInt(dateEcheance) : null;
+        console.log("Date convertie:", dateEcheanceBigInt);
 
         const todo = await addTodo(
-            title,
+            titre,
             description,
-            priority,
-            dueDateBigInt,
-            assignedTo,
-            status || "A faire"
+            priorite,
+            dateEcheanceBigInt,
+            assigneA,
+            statut || "A faire"
         );
         
         // Conversion du BigInt en string pour la réponse JSON
         const todoResponse = {
             ...todo,
-            dueDate: todo.dueDate ? todo.dueDate.toString() : null
+            dateEcheance: todo.dateEcheance ? todo.dateEcheance.toString() : null
         };
         
         return response.status(200).json({ todo: todoResponse, message: "Tâche ajoutée avec succès" });
@@ -74,31 +103,28 @@ router.post("/api/todo", async (request, response) => {
     }
 });
 
-// Constantes pour les statuts valides
-const VALID_STATUSES = ["A faire", "En cours", "En revision", "Terminee"];
-
-// Route pour mettre à jour une tache complètement
+// Route pour mettre à jour une tâche complètement
 router.put("/api/todo/:id", async (request, response) => {
     try {
         const id = parseInt(request.params.id);
-        const updates = request.body;
+        const update = request.body;
 
         // Validation de la priorité si elle est fournie
-        if (updates.priority && !["Faible", "Moyenne", "Élevée"].includes(updates.priority)) {
+        if (update.priorite && !["Faible", "Moyenne", "Élevée"].includes(update.priorite)) {
             return response.status(400).json({ error: "Priorité invalide" });
         }
 
         // Validation du statut si fourni
-        if (updates.status && !VALID_STATUSES.includes(updates.status)) {
+        if (update.statut && !["A faire", "En cours", "En revision", "Terminee"].includes(update.statut)) {
             return response.status(400).json({ error: "Statut invalide" });
         }
 
         // Conversion de la date limite en BigInt si fournie
-        if (updates.dueDate) {
-            updates.dueDate = BigInt(updates.dueDate);
+        if (update.dateEcheance) {
+            update.dateEcheance = BigInt(update.dateEcheance);
         }
 
-        const todo = await updateTodo(id, updates);
+        const todo = await updateTodo(id, update);
         return response.status(200).json({ todo, message: "Tâche mise à jour avec succès" });
     } catch (error) {
         console.error("Erreur lors de la mise à jour:", error);
@@ -106,22 +132,22 @@ router.put("/api/todo/:id", async (request, response) => {
     }
 });
 
-// Route pour mettre à jour une tache
+// Route pour mettre à jour le statut d'une tâche
 router.patch("/api/todo/:id/status", async (request, response) => {
     try {
         const id = parseInt(request.params.id);
-        const { status } = request.body;
+        const { statut } = request.body;
 
-        if (!VALID_STATUSES.includes(status)) {
-            return response.status(400).json({ error: "Statut invalide. Les statuts valides sont : " + VALID_STATUSES.join(", ") });
+        if (!["A faire", "En cours", "En revision", "Terminee"].includes(statut)) {
+            return response.status(400).json({ error: "Statut invalide" });
         }
 
-        const todo = await updateTodoStatus(id, status);
+        const todo = await updateTodoStatus(id, statut);
         
         // Convertir le BigInt en string dans la réponse
         const todoResponse = {
             ...todo,
-            dueDate: todo.dueDate ? todo.dueDate.toString() : null
+            dateEcheance: todo.dateEcheance ? todo.dateEcheance.toString() : null
         };
 
         return response.status(200).json({ todo: todoResponse, message: "Statut mis à jour avec succès" });
@@ -131,7 +157,7 @@ router.patch("/api/todo/:id/status", async (request, response) => {
     }
 });
 
-// Route pour supprimer une tache
+// Route pour supprimer une tâche
 router.delete("/api/todo/:id", async (request, response) => {
     try {
         const id = parseInt(request.params.id);
@@ -150,6 +176,30 @@ router.delete("/api/todo/:id", async (request, response) => {
             return response.status(404).json({ error: "Tâche non trouvée" });
         }
         return response.status(500).json({ error: "Erreur lors de la suppression de la tâche" });
+    }
+});
+
+// Route pour obtenir l'historique d'une tâche
+router.get("/api/todo/:id/history", async (request, response) => {
+    try {
+        const id = parseInt(request.params.id);
+        
+        if (isNaN(id)) {
+            return response.status(400).json({ error: "ID de tâche invalide" });
+        }
+
+        const history = await getTodoHistory(id);
+        
+        // Convertir les BigInt en string dans la réponse
+        const historyResponse = history.map(entry => ({
+            ...entry,
+            dateEcheance: entry.dateEcheance ? entry.dateEcheance.toString() : null
+        }));
+
+        return response.status(200).json(historyResponse);
+    } catch (error) {
+        console.error("Erreur lors de la récupération de l'historique:", error);
+        return response.status(500).json({ error: "Erreur lors de la récupération de l'historique" });
     }
 });
 

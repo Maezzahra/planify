@@ -12,6 +12,7 @@
                     placeholder="Titre de la tâche"
                     required
                 />
+                <div id="error-titre" class="error-message"></div>
             </div>
             <div class="form-group">
                 <textarea
@@ -19,6 +20,7 @@
                     name="description"
                     placeholder="Description de la tâche (optionnel)"
                 ></textarea>
+                <div id="error-description" class="error-message"></div>
             </div>
             <div class="form-group">
                 <select id="todo-priority" name="priority" required>
@@ -26,6 +28,7 @@
                     <option value="Moyenne" selected>Moyenne</option>
                     <option value="Élevée">Élevée</option>
                 </select>
+                <div id="error-priorite" class="error-message"></div>
             </div>
             <div class="form-group">
                 <input
@@ -34,6 +37,7 @@
                     name="dueDate"
                     required
                 />
+                <div id="error-date" class="error-message"></div>
             </div>
             <div class="form-group">
                 <input
@@ -42,6 +46,7 @@
                     name="assignedTo"
                     placeholder="Assigné à"
                 />
+                <div id="error-assigne" class="error-message"></div>
             </div>
             <div class="form-group">
                 <select id="todo-status" name="status" required>
@@ -50,6 +55,7 @@
                     <option value="En revision">En révision</option>
                     <option value="Terminee">Terminée</option>
                 </select>
+                <div id="error-statut" class="error-message"></div>
             </div>
             <div class="form-group">
                 <button type="submit">Ajouter une tâche</button>
@@ -192,7 +198,13 @@
 <!-- Modale pour l'historique -->
 <div id="history-modal" class="modal">
     <div class="modal-content">
-        <!-- Le contenu sera injecté dynamiquement par JavaScript -->
+        <div class="modal-header">
+            <h2>Historique de la tâche</h2>
+            <button class="close-modal">&times;</button>
+        </div>
+        <div id="history-list" class="history-list">
+            <!-- Le contenu sera injecté dynamiquement par JavaScript -->
+        </div>
     </div>
 </div>
 
@@ -217,6 +229,19 @@
 
 .history-btn:hover {
     color: #333;
+}
+
+/* Styles pour les messages d'erreur */
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    min-height: 1.25rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+    position: relative;
 }
 </style>
 

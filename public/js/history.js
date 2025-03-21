@@ -3,6 +3,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeBtn = document.querySelector('.close-modal');
     const historyList = document.getElementById('history-list');
 
+    if (!modal || !closeBtn || !historyList) {
+        console.error('Éléments DOM manquants pour l\'historique');
+        return;
+    }
+
     // Fermer la modale
     closeBtn.onclick = function() {
         modal.style.display = "none";

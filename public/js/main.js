@@ -1,12 +1,12 @@
-// Récupération des éléments du DOM
-const todoForm = document.getElementById("todo-form");
-const titleInput = document.getElementById("todo-input");
-const descriptionInput = document.getElementById("todo-description");
-const prioritySelect = document.getElementById("todo-priority");
-const dueDateInput = document.getElementById("todo-due-date");
-const assignedToInput = document.getElementById("todo-assigned-to");
-const statusSelect = document.getElementById("edit-status");
-const todoLists = document.querySelectorAll(".todo-list");
+// Variables globales pour les éléments du DOM
+let todoForm;
+let titleInput;
+let descriptionInput;
+let prioritySelect;
+let dueDateInput;
+let assignedToInput;
+let statusSelect;
+let todoLists;
 
 // Constantes pour les statuts
 const STATUSES = {
@@ -15,6 +15,9 @@ const STATUSES = {
     IN_REVIEW: "En revision",
     DONE: "Terminee"
 };
+
+// Import des validations
+import { validateTodoForm } from './validations/todoValidations.js';
 
 // Fonction pour formater la date
 const formatDate = (timestamp) => {
@@ -153,17 +156,24 @@ const addTodoToDOM = (todo) => {
 const addTodoToServer = async (event) => {
     event.preventDefault();
 
+    // Vérification de la présence des éléments du formulaire
+    if (!titleInput || !descriptionInput || !prioritySelect || !dueDateInput || !assignedToInput || !statusSelect) {
+        console.error("Un ou plusieurs éléments du formulaire sont manquants");
+        showError("Une erreur est survenue lors de l'accès au formulaire");
+        return;
+    }
+
+    // Validation du formulaire
+    if (!validateTodoForm()) {
+        return;
+    }
+
     const titre = titleInput.value.trim();
     const description = descriptionInput.value.trim();
     const priorite = prioritySelect.value;
     const dateEcheance = dueDateInput.value ? new Date(dueDateInput.value).getTime() : null;
     const assigneA = assignedToInput.value.trim();
-    const statut = document.getElementById("todo-status").value; // Utiliser le statut sélectionné
-
-    if (!titre) {
-        showError("Le titre est requis !");
-        return;
-    }
+    const statut = statusSelect.value;
 
     try {
         const response = await fetch("/api/todo", {
@@ -309,6 +319,16 @@ function showError(message) {
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', async () => {
+    // Initialisation des éléments du DOM
+    todoForm = document.getElementById("todo-form");
+    titleInput = document.getElementById("todo-input");
+    descriptionInput = document.getElementById("todo-description");
+    prioritySelect = document.getElementById("todo-priority");
+    dueDateInput = document.getElementById("todo-due-date");
+    assignedToInput = document.getElementById("todo-assigned-to");
+    statusSelect = document.getElementById("todo-status");
+    todoLists = document.querySelectorAll(".todo-list");
+
     // Charger les tâches initiales
     await loadTodos();
 
@@ -319,14 +339,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Gestionnaire pour le formulaire d'ajout
-    const addForm = document.getElementById('todo-form');
-    if (addForm) {
-        addForm.addEventListener('submit', addTodoToServer);
+    if (todoForm) {
+        todoForm.addEventListener('submit', addTodoToServer);
     }
 
     // Configuration du drag and drop
-    const todoLists = document.querySelectorAll('.task-list');
-    todoLists.forEach(list => {
+    const taskLists = document.querySelectorAll('.task-list');
+    taskLists.forEach(list => {
         list.addEventListener('dragover', allowDrop);
         list.addEventListener('dragleave', dragLeave);
         list.addEventListener('drop', drop);

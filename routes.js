@@ -9,8 +9,26 @@ import {
     getStatuses, 
     getPriorities 
 } from "./model/todo.js";
+import { PrismaClient } from "@prisma/client";
+import { validateTodo } from './model/validations/todoValidations.js';
 
 const router = Router();
+const prisma = new PrismaClient();
+
+// Fonction utilitaire pour sérialiser les BigInt
+const serializeBigInt = (obj) => {
+    if (obj === null || obj === undefined) return obj;
+    if (typeof obj === 'bigint') return obj.toString();
+    if (Array.isArray(obj)) return obj.map(serializeBigInt);
+    if (typeof obj === 'object') {
+        const result = {};
+        for (const key in obj) {
+            result[key] = serializeBigInt(obj[key]);
+        }
+        return result;
+    }
+    return obj;
+};
 
 //Définition des routes
 // Route pour la page d'accueil
@@ -36,7 +54,7 @@ router.get("/document", (request, response) => {
 router.get("/api/todos", async (request, response) => {
     try {
         const todos = await getTodos();
-        return response.status(200).json(todos);
+        return response.status(200).json(serializeBigInt(todos));
     } catch (error) {
         return response.status(400).json({ error: error.message });
     }
@@ -63,72 +81,115 @@ router.get("/api/priorities", async (request, response) => {
 });
 
 // Route pour ajouter une tâche
-router.post("/api/todo", async (request, response) => {
+router.post("/api/todo", async (req, res) => {
     try {
-        const { titre, description, priorite, dateEcheance, assigneA, statut } = request.body;
-        console.log("Données reçues:", { titre, description, priorite, dateEcheance, assigneA, statut });
-
-        if (!titre || titre.trim() === "") {
-            return response.status(400).json({ error: "Le titre est requis" });
+        // Validation des données
+        const validation = validateTodo(req.body);
+        if (!validation.isValid) {
+            return res.status(400).json({ message: validation.errors.join(', ') });
         }
 
-        // Validation de la priorité
-        if (priorite && !["Faible", "Moyenne", "Élevée"].includes(priorite)) {
-            return response.status(400).json({ error: "Priorité invalide" });
+        // Récupérer les IDs des relations
+        const [status, priority] = await Promise.all([
+            prisma.statut.findUnique({
+                where: { nom: req.body.statut }
+            }),
+            prisma.priorite.findUnique({
+                where: { nom: req.body.priorite }
+            })
+        ]);
+
+        if (!status || !priority) {
+            return res.status(400).json({ 
+                message: "Statut ou priorité invalide" 
+            });
         }
 
-        console.log("Conversion de la date:", dateEcheance);
-        const dateEcheanceBigInt = dateEcheance ? BigInt(dateEcheance) : null;
-        console.log("Date convertie:", dateEcheanceBigInt);
+        const todo = await prisma.tache.create({
+            data: {
+                titre: req.body.titre,
+                description: req.body.description,
+                statutId: status.id,
+                prioriteId: priority.id,
+                dateEcheance: BigInt(new Date(req.body.dateEcheance).getTime()),
+                assigneA: req.body.assigneA
+            },
+            include: {
+                statut: true,
+                priorite: true
+            }
+        });
 
-        const todo = await addTodo(
-            titre,
-            description,
-            priorite,
-            dateEcheanceBigInt,
-            assigneA,
-            statut || "A faire"
-        );
-        
-        // Conversion du BigInt en string pour la réponse JSON
-        const todoResponse = {
+        // Création de l'entrée d'historique
+        await prisma.historiqueTache.create({
+            data: {
+                tacheId: todo.id,
+                typeChangement: "CREATION",
+                titre: todo.titre,
+                description: todo.description,
+                priorite: priority.nom,
+                dateEcheance: todo.dateEcheance,
+                assigneA: todo.assigneA,
+                statut: status.nom,
+            },
+        });
+
+        // Formater la réponse pour inclure les noms au lieu des IDs
+        const responseTodo = {
             ...todo,
-            dateEcheance: todo.dateEcheance ? todo.dateEcheance.toString() : null
+            statut: status.nom,
+            priorite: priority.nom
         };
-        
-        return response.status(200).json({ todo: todoResponse, message: "Tâche ajoutée avec succès" });
+
+        // Sérialiser la réponse pour gérer les BigInt
+        res.status(201).json({ todo: serializeBigInt(responseTodo) });
     } catch (error) {
         console.error("Erreur lors de l'ajout de la tâche:", error);
-        return response.status(400).json({ error: error.message });
+        res.status(500).json({ message: "Erreur lors de l'ajout de la tâche" });
     }
 });
 
-// Route pour mettre à jour une tâche complètement
-router.put("/api/todo/:id", async (request, response) => {
+// Route pour mettre à jour une tâche
+router.patch("/api/todo/:id", async (req, res) => {
     try {
-        const id = parseInt(request.params.id);
-        const update = request.body;
-
-        // Validation de la priorité si elle est fournie
-        if (update.priorite && !["Faible", "Moyenne", "Élevée"].includes(update.priorite)) {
-            return response.status(400).json({ error: "Priorité invalide" });
+        const { id } = req.params;
+        
+        // Validation des données
+        const validation = validateTodo(req.body);
+        if (!validation.isValid) {
+            return res.status(400).json({ message: validation.errors.join(', ') });
         }
 
-        // Validation du statut si fourni
-        if (update.statut && !["A faire", "En cours", "En revision", "Terminee"].includes(update.statut)) {
-            return response.status(400).json({ error: "Statut invalide" });
-        }
+        const todo = await prisma.tache.update({
+            where: { id: parseInt(id) },
+            data: {
+                titre: req.body.titre,
+                description: req.body.description,
+                priorite: req.body.priorite,
+                dateEcheance: req.body.dateEcheance,
+                assigneA: req.body.assigneA,
+                statut: req.body.statut,
+            },
+        });
 
-        // Conversion de la date limite en BigInt si fournie
-        if (update.dateEcheance) {
-            update.dateEcheance = BigInt(update.dateEcheance);
-        }
+        // Création de l'entrée d'historique
+        await prisma.historiqueTache.create({
+            data: {
+                tacheId: todo.id,
+                typeChangement: "MODIFICATION",
+                titre: todo.titre,
+                description: todo.description,
+                priorite: todo.priorite,
+                dateEcheance: todo.dateEcheance,
+                assigneA: todo.assigneA,
+                statut: todo.statut,
+            },
+        });
 
-        const todo = await updateTodo(id, update);
-        return response.status(200).json({ todo, message: "Tâche mise à jour avec succès" });
+        res.json({ todo });
     } catch (error) {
-        console.error("Erreur lors de la mise à jour:", error);
-        return response.status(400).json({ error: error.message });
+        console.error("Erreur lors de la mise à jour de la tâche:", error);
+        res.status(500).json({ message: "Erreur lors de la mise à jour de la tâche" });
     }
 });
 

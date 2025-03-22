@@ -19,7 +19,16 @@ const statusError = document.getElementById('error-statut');
 const showError = (element, message) => {
     if (element) {
         element.innerText = message;
+        element.style.display = message ? 'block' : 'none';
+        element.style.color = '#dc3545';
+        element.style.fontSize = '0.875rem';
+        element.style.marginTop = '0.25rem';
     }
+};
+
+// Fonction utilitaire pour vérifier si une chaîne contient des nombres
+const containsNumbers = (str) => {
+    return /\d/.test(str);
 };
 
 // Validation du titre
@@ -30,6 +39,10 @@ export const validateTitle = (title) => {
     }
     if (title.length < 5) {
         showError(titleError, 'Le titre doit contenir au moins 5 caractères');
+        return false;
+    }
+    if (containsNumbers(title)) {
+        showError(titleError, 'Le titre ne doit pas contenir de chiffres');
         return false;
     }
     showError(titleError, '');
@@ -44,6 +57,10 @@ export const validateDescription = (description) => {
     }
     if (description.length < 5) {
         showError(descriptionError, 'La description doit contenir au moins 5 caractères');
+        return false;
+    }
+    if (containsNumbers(description)) {
+        showError(descriptionError, 'La description ne doit pas contenir de chiffres');
         return false;
     }
     showError(descriptionError, '');
@@ -84,6 +101,10 @@ export const validateDueDate = (date) => {
 export const validateAssignedTo = (assignedTo) => {
     if (!assignedTo || typeof assignedTo !== 'string') {
         showError(assignedToError, 'L\'assigné est requis');
+        return false;
+    }
+    if (containsNumbers(assignedTo)) {
+        showError(assignedToError, 'Le nom de l\'assigné ne doit pas contenir de chiffres');
         return false;
     }
     showError(assignedToError, '');

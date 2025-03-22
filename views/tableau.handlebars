@@ -7,6 +7,29 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/tableau.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .todo-item {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .todo-item:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .drag-handle {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            cursor: grab;
+            color: #6b778c;
+            padding: 4px;
+        }
+
+        .drag-handle:hover {
+            color: #172b4d;
+        }
+    </style>
 </head>
 <body>
     <div class="board-container">

@@ -1,11 +1,18 @@
 const validateTodo = (todo) => {
     const errors = [];
 
+    // Fonction utilitaire pour vérifier si une chaîne contient des nombres
+    const containsNumbers = (str) => {
+        return /\d/.test(str);
+    };
+
     // Validation du titre
     if (!todo.titre || typeof todo.titre !== 'string') {
         errors.push('Le titre est requis et doit être une chaîne de caractères');
     } else if (todo.titre.length < 5) {
         errors.push('Le titre doit contenir au moins 5 caractères');
+    } else if (containsNumbers(todo.titre)) {
+        errors.push('Le titre ne doit pas contenir de chiffres');
     }
 
     // Validation de la description
@@ -13,6 +20,8 @@ const validateTodo = (todo) => {
         errors.push('La description est requise et doit être une chaîne de caractères');
     } else if (todo.description.length < 5) {
         errors.push('La description doit contenir au moins 5 caractères');
+    } else if (containsNumbers(todo.description)) {
+        errors.push('La description ne doit pas contenir de chiffres');
     }
 
     // Validation de la priorité
@@ -35,6 +44,8 @@ const validateTodo = (todo) => {
     // Validation de l'assigné
     if (!todo.assigneA || typeof todo.assigneA !== 'string') {
         errors.push('L\'assigné est requis et doit être une chaîne de caractères');
+    } else if (containsNumbers(todo.assigneA)) {
+        errors.push('Le nom de l\'assigné ne doit pas contenir de chiffres');
     }
 
     // Validation du statut

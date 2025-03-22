@@ -75,9 +75,10 @@
             <div class="form-group">
                 <label for="statut">Statut</label>
                 <select id="statut" name="statut" class="form-control" required>
-                    <option value="À faire" {{#if (eq task.statut "À faire")}}selected{{/if}}>À faire</option>
+                    <option value="A faire" {{#if (eq task.statut "A faire")}}selected{{/if}}>À faire</option>
                     <option value="En cours" {{#if (eq task.statut "En cours")}}selected{{/if}}>En cours</option>
-                    <option value="Terminé" {{#if (eq task.statut "Terminé")}}selected{{/if}}>Terminé</option>
+                    <option value="En revision" {{#if (eq task.statut "En revision")}}selected{{/if}}>En révision</option>
+                    <option value="Terminee" {{#if (eq task.statut "Terminee")}}selected{{/if}}>Terminé</option>
                 </select>
             </div>
 
@@ -107,17 +108,75 @@
         </form>
 
         <div class="history-section">
-            <h3>Historique des modifications</h3>
+            <h3><i class="fas fa-history"></i> Historique des modifications</h3>
             {{#each history}}
                 <div class="history-item">
-                    <div class="history-date">{{formatDate this.dateCreation}}</div>
-                    <div class="history-change">
+                    <div class="history-header">
+                        <div class="history-date">
+                            <i class="far fa-clock"></i> {{formatDate this.dateCreation}}
+                        </div>
+                        <div class="history-type">
+                            {{#if (eq this.typeChangement "CREATION")}}
+                                <span class="badge badge-success"><i class="fas fa-plus-circle"></i> Création</span>
+                            {{else if (eq this.typeChangement "MODIFICATION")}}
+                                <span class="badge badge-warning"><i class="fas fa-edit"></i> Modification</span>
+                            {{else if (eq this.typeChangement "SUPPRESSION")}}
+                                <span class="badge badge-danger"><i class="fas fa-trash"></i> Suppression</span>
+                            {{else}}
+                                <span class="badge badge-info"><i class="fas fa-info-circle"></i> {{this.typeChangement}}</span>
+                            {{/if}}
+                        </div>
+                    </div>
+                    <div class="history-content">
                         {{#if (eq this.typeChangement "CREATION")}}
-                            Tâche créée
+                            <p>Tâche créée avec les informations suivantes :</p>
+                            <ul class="changes-list">
+                                <li><strong>Titre :</strong> {{this.titre}}</li>
+                                <li><strong>Statut :</strong> {{this.statut}}</li>
+                                <li><strong>Priorité :</strong> {{this.priorite}}</li>
+                                <li><strong>Date d'échéance :</strong> {{formatDate this.dateEcheance}}</li>
+                                <li><strong>Assigné à :</strong> {{this.assigneA}}</li>
+                            </ul>
                         {{else if (eq this.typeChangement "MODIFICATION")}}
-                            Tâche modifiée
+                            <p>État de la tâche après modification :</p>
+                            <ul class="changes-list">
+                                <li><strong>Titre :</strong> {{this.titre}}</li>
+                                <li><strong>Statut :</strong> {{this.statut}}</li>
+                                <li><strong>Priorité :</strong> {{this.priorite}}</li>
+                                <li><strong>Date d'échéance :</strong> {{formatDate this.dateEcheance}}</li>
+                                <li><strong>Assigné à :</strong> {{this.assigneA}}</li>
+                            </ul>
+                            {{#if this.changements}}
+                                <p class="changes-summary">Changements effectués :</p>
+                                <ul class="changes-list changes-highlight">
+                                    {{#each this.changements}}
+                                        <li>
+                                            <strong>{{this.champ}}:</strong> 
+                                            <span class="change-value">
+                                                {{#if this.ancienneValeur}}
+                                                    <span class="old-value">{{this.ancienneValeur}}</span>
+                                                    <i class="fas fa-arrow-right"></i>
+                                                {{/if}}
+                                                <span class="new-value">{{this.nouvelleValeur}}</span>
+                                            </span>
+                                        </li>
+                                    {{/each}}
+                                </ul>
+                            {{/if}}
+                            {{#if this.description}}
+                                <div class="change-description">
+                                    <strong>Description :</strong>
+                                    <p>{{this.description}}</p>
+                                </div>
+                            {{/if}}
+                        {{else if (eq this.typeChangement "SUPPRESSION")}}
+                            <p>Tâche supprimée :</p>
+                            <ul class="changes-list">
+                                <li><strong>Titre :</strong> {{this.titre}}</li>
+                                <li><strong>Statut :</strong> {{this.statut}}</li>
+                            </ul>
                         {{else}}
-                            {{this.typeChangement}}
+                            <p>{{this.typeChangement}}</p>
                         {{/if}}
                     </div>
                 </div>

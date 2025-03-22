@@ -61,8 +61,8 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(function(reponse) {
             // On vérifie si la réponse est ok
             if (reponse.ok) {
-                // Si oui, on recharge la page
-                window.location.reload();
+                // Si oui, on redirige vers le tableau
+                window.location.href = '/board';
             } else {
                 // Si non, on affiche une erreur
                 reponse.json().then(function(erreur) {

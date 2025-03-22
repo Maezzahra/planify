@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau des Tâches</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/tableau.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="board-container">
+        <h1>Tableau des Tâches</h1>
+        
+        <!-- Colonnes du tableau -->
+        <div class="board">
+            <!-- Colonne "À faire" -->
+            <div class="column">
+                <h2>À faire</h2>
+                <ul class="task-list" data-status="A faire">
+                    {{#each todos}}
+                        {{#if (eq this.statut "A faire")}}
+                            <li class="todo-item task-card" draggable="true" data-id="{{this.id}}">
+                                <div class="card-content">
+                                    <h3 class="title">{{this.titre}}</h3>
+                                    <p class="description">{{this.description}}</p>
+                                    <div class="task-details">
+                                        <span class="priority priority-{{toLowerCase this.priorite}}">{{this.priorite}}</span>
+                                        {{#if this.dateEcheance}}
+                                            <span class="due-date">Échéance: {{formatDate this.dateEcheance}}</span>
+                                        {{/if}}
+                                        {{#if this.assigneA}}
+                                            <span class="assigned-to">Assigné à: {{this.assigneA}}</span>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                                <div class="drag-handle">
+                                    <i class="fas fa-grip-vertical"></i>
+                                </div>
+                            </li>
+                        {{/if}}
+                    {{/each}}
+                </ul>
+            </div>
+
+            <!-- Colonne "En cours" -->
+            <div class="column">
+                <h2>En cours</h2>
+                <ul class="task-list" data-status="En cours">
+                    {{#each todos}}
+                        {{#if (eq this.statut "En cours")}}
+                            <li class="todo-item task-card" draggable="true" data-id="{{this.id}}">
+                                <div class="card-content">
+                                    <h3 class="title">{{this.titre}}</h3>
+                                    <p class="description">{{this.description}}</p>
+                                    <div class="task-details">
+                                        <span class="priority priority-{{toLowerCase this.priorite}}">{{this.priorite}}</span>
+                                        {{#if this.dateEcheance}}
+                                            <span class="due-date">Échéance: {{formatDate this.dateEcheance}}</span>
+                                        {{/if}}
+                                        {{#if this.assigneA}}
+                                            <span class="assigned-to">Assigné à: {{this.assigneA}}</span>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                                <div class="drag-handle">
+                                    <i class="fas fa-grip-vertical"></i>
+                                </div>
+                            </li>
+                        {{/if}}
+                    {{/each}}
+                </ul>
+            </div>
+
+            <!-- Colonne "En révision" -->
+            <div class="column">
+                <h2>En révision</h2>
+                <ul class="task-list" data-status="En revision">
+                    {{#each todos}}
+                        {{#if (eq this.statut "En revision")}}
+                            <li class="todo-item task-card" draggable="true" data-id="{{this.id}}">
+                                <div class="card-content">
+                                    <h3 class="title">{{this.titre}}</h3>
+                                    <p class="description">{{this.description}}</p>
+                                    <div class="task-details">
+                                        <span class="priority priority-{{toLowerCase this.priorite}}">{{this.priorite}}</span>
+                                        {{#if this.dateEcheance}}
+                                            <span class="due-date">Échéance: {{formatDate this.dateEcheance}}</span>
+                                        {{/if}}
+                                        {{#if this.assigneA}}
+                                            <span class="assigned-to">Assigné à: {{this.assigneA}}</span>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                                <div class="drag-handle">
+                                    <i class="fas fa-grip-vertical"></i>
+                                </div>
+                            </li>
+                        {{/if}}
+                    {{/each}}
+                </ul>
+            </div>
+
+            <!-- Colonne "Terminé" -->
+            <div class="column">
+                <h2>Terminé</h2>
+                <ul class="task-list" data-status="Terminee">
+                    {{#each todos}}
+                        {{#if (eq this.statut "Terminee")}}
+                            <li class="todo-item task-card" draggable="true" data-id="{{this.id}}">
+                                <div class="card-content">
+                                    <h3 class="title">{{this.titre}}</h3>
+                                    <p class="description">{{this.description}}</p>
+                                    <div class="task-details">
+                                        <span class="priority priority-{{toLowerCase this.priorite}}">{{this.priorite}}</span>
+                                        {{#if this.dateEcheance}}
+                                            <span class="due-date">Échéance: {{formatDate this.dateEcheance}}</span>
+                                        {{/if}}
+                                        {{#if this.assigneA}}
+                                            <span class="assigned-to">Assigné à: {{this.assigneA}}</span>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                                <div class="drag-handle">
+                                    <i class="fas fa-grip-vertical"></i>
+                                </div>
+                            </li>
+                        {{/if}}
+                    {{/each}}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/dragAndDrop.js"></script>
+</body>
+</html> 

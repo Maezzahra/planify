@@ -10,14 +10,49 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Todo {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String?
-  status      String   @default("A faire")
-  priority    String   @default("Moyenne")  // Faible, Moyenne, Élevée
-  dueDate     BigInt?  // EPOCH timestamp in milliseconds
-  assignedTo  String?  // Team member name/identifier
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model Statut {
+  id          Int       @id @default(autoincrement())
+  nom         String    @unique
+  taches      Tache[]
+  dateCreation DateTime @default(now())
+  dateMaj     DateTime @updatedAt
+}
+
+model Priorite {
+  id          Int       @id @default(autoincrement())
+  nom         String    @unique
+  taches      Tache[]
+  dateCreation DateTime @default(now())
+  dateMaj     DateTime @updatedAt
+}
+
+model HistoriqueTache {
+  id            Int       @id @default(autoincrement())
+  tacheId       Int       // ID de la tâche modifiée
+  titre         String    // État de la tâche au moment du changement
+  description   String?
+  statut        String
+  priorite      String
+  dateEcheance  BigInt?
+  assigneA      String?
+  typeChangement String    // Type de changement (CREATION, MODIFICATION, SUPPRESSION)
+  modifiePar    String?    // Utilisateur ayant effectué le changement
+  dateCreation  DateTime   @default(now())
+  
+  tache         Tache     @relation(fields: [tacheId], references: [id], onDelete: Cascade)
+}
+
+model Tache {
+  id            Int       @id @default(autoincrement())
+  titre         String
+  description   String?
+  statut        Statut    @relation(fields: [statutId], references: [id])
+  statutId      Int
+  priorite      Priorite  @relation(fields: [prioriteId], references: [id])
+  prioriteId    Int
+  dateEcheance  BigInt?   // Timestamp EPOCH en millisecondes
+  assigneA      String?   // Nom/identifiant du membre de l'équipe
+  dateCreation  DateTime  @default(now())
+  dateMaj       DateTime  @updatedAt
+  historique    HistoriqueTache[]
 }

@@ -12,6 +12,7 @@
                     placeholder="Titre de la tâche"
                     required
                 />
+                <div id="error-titre" class="error-message"></div>
             </div>
             <div class="form-group">
                 <textarea
@@ -19,6 +20,7 @@
                     name="description"
                     placeholder="Description de la tâche (optionnel)"
                 ></textarea>
+                <div id="error-description" class="error-message"></div>
             </div>
             <div class="form-group">
                 <select id="todo-priority" name="priority" required>
@@ -26,6 +28,7 @@
                     <option value="Moyenne" selected>Moyenne</option>
                     <option value="Élevée">Élevée</option>
                 </select>
+                <div id="error-priorite" class="error-message"></div>
             </div>
             <div class="form-group">
                 <input
@@ -34,6 +37,7 @@
                     name="dueDate"
                     required
                 />
+                <div id="error-date" class="error-message"></div>
             </div>
             <div class="form-group">
                 <input
@@ -42,6 +46,7 @@
                     name="assignedTo"
                     placeholder="Assigné à"
                 />
+                <div id="error-assigne" class="error-message"></div>
             </div>
             <div class="form-group">
                 <select id="todo-status" name="status" required>
@@ -50,6 +55,7 @@
                     <option value="En revision">En révision</option>
                     <option value="Terminee">Terminée</option>
                 </select>
+                <div id="error-statut" class="error-message"></div>
             </div>
             <div class="form-group">
                 <button type="submit">Ajouter une tâche</button>
@@ -78,7 +84,12 @@
                                         <span class="assigned-to">Assigné à: {{this.assignedTo}}</span>
                                     {{/if}}
                                 </div>
-                                <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                <div class="task-actions">
+                                    <button class="history-btn" type="button" aria-label="Voir l'historique" data-id="{{this.id}}">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                </div>
                             </div>
                         </li>
                     {{/if}}
@@ -105,7 +116,12 @@
                                         <span class="assigned-to">Assigné à: {{this.assignedTo}}</span>
                                     {{/if}}
                                 </div>
-                                <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                <div class="task-actions">
+                                    <button class="history-btn" type="button" aria-label="Voir l'historique" data-id="{{this.id}}">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                </div>
                             </div>
                         </li>
                     {{/if}}
@@ -132,7 +148,12 @@
                                         <span class="assigned-to">Assigné à: {{this.assignedTo}}</span>
                                     {{/if}}
                                 </div>
-                                <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                <div class="task-actions">
+                                    <button class="history-btn" type="button" aria-label="Voir l'historique" data-id="{{this.id}}">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                </div>
                             </div>
                         </li>
                     {{/if}}
@@ -159,7 +180,12 @@
                                         <span class="assigned-to">Assigné à: {{this.assignedTo}}</span>
                                     {{/if}}
                                 </div>
-                                <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                <div class="task-actions">
+                                    <button class="history-btn" type="button" aria-label="Voir l'historique" data-id="{{this.id}}">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                </div>
                             </div>
                         </li>
                     {{/if}}
@@ -168,3 +194,55 @@
         </div>
     </div>
 </div>
+
+<!-- Modale pour l'historique -->
+<div id="history-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Historique de la tâche</h2>
+            <button class="close-modal">&times;</button>
+        </div>
+        <div id="history-list" class="history-list">
+            <!-- Le contenu sera injecté dynamiquement par JavaScript -->
+        </div>
+    </div>
+</div>
+
+<style>
+/* Styles pour les boutons d'action */
+.task-actions {
+    display: flex;
+    gap: 8px;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.history-btn {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 16px;
+}
+
+.history-btn:hover {
+    color: #333;
+}
+
+/* Styles pour les messages d'erreur */
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    min-height: 1.25rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+    position: relative;
+}
+</style>
+
+<script src="/js/history.js"></script>

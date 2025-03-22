@@ -1,0 +1,133 @@
+.modal {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: 0;
+    padding: 20px;
+    border-radius: 8px 8px 0 0;
+    width: 100%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease-out;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+@keyframes slideUp {
+    from {
+        transform: translate(-50%, 100%);
+    }
+    to {
+        transform: translate(-50%, 0);
+    }
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.close:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-top: 10px;
+}
+
+.history-item {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.change-type {
+    font-weight: bold;
+    color: #0747A6;
+    background-color: #DEEBFF;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.change-date {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.history-details {
+    font-size: 0.95em;
+}
+
+.history-details p {
+    margin: 5px 0;
+    line-height: 1.4;
+}
+
+.history-details strong {
+    color: #172B4D;
+    margin-right: 5px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    background-color: #fefefe;
+    z-index: 1;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #172B4D;
+    font-size: 1.5em;
+} 

@@ -1,4 +1,3 @@
-//Doit etre en debut de fichier pour charger les variables d'environnement
 import "dotenv/config";
 
 //importer les routes
@@ -12,8 +11,20 @@ import compression from "compression";
 import cors from "cors";
 import cspOption from "./csp-options.js";
 
+// Importation de la session
+import session from "express-session";
+// Importation de la base de données de session
+import memorystore from "memorystore";
+import passport from "passport";
+
+import "./authentification.js";
+
 // Crréation du serveur express
 const app = express();
+
+//initialisation de la base de données de session
+const MemoryStore = memorystore(session);
+
 app.engine("handlebars", engine({
     helpers: {
         eq: function (v1, v2) {
@@ -46,8 +57,8 @@ app.engine("handlebars", engine({
             return `${year}-${month}-${day}T${hours}:${minutes}`;
         }
     }
-})); // Moteur de rendu
-app.set("view engine", "handlebars"); // Pour indiquer que les vues seront des fichiers .handlebars
+})); 
+app.set("view engine", "handlebars");// Pour indiquer que les vues seront des fichiers .handlebars
 app.set("views", "./views"); // Pour indique le dossier contenant les vues
 
 // Ajout de middlewares
@@ -56,6 +67,21 @@ app.use(compression());
 app.use(cors());
 app.use(json());
 
+//Ajout des middlewares pour gérer les sessions
+
+app.use(
+    session({
+    cookie: { maxAge: 3600000 },
+    name: process.env.npm_package_name,
+    store: new MemoryStore({ checkPeriod: 3600000 }),
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.SESSION_SECRET
+}));
+
+//Middleware pour gerer passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(express.static("public"));
 

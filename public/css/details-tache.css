@@ -1,0 +1,399 @@
+/* Styles spécifiques pour la page de détails de tâche */
+.task-details-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.task-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.btn-edit {
+    background-color: #0052cc;
+    color: white;
+}
+
+.btn-delete {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.edit-form {
+    display: none;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f4f5f7;
+    border-radius: 4px;
+}
+
+.edit-form.active {
+    display: block;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #172b4d;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #dfe1e6;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn-save {
+    background-color: #36b37e;
+    color: white;
+}
+
+.btn-cancel {
+    background-color: #6b778c;
+    color: white;
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #0052cc;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.back-button:hover {
+    background-color: #0747a6;
+}
+
+.task-content {
+    margin-bottom: 2rem;
+}
+
+.task-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.meta-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.meta-label {
+    font-size: 0.9rem;
+    color: #5e6c84;
+    margin-bottom: 0.5rem;
+}
+
+.meta-value {
+    font-size: 1rem;
+    color: #172b4d;
+}
+
+.task-description {
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.task-description h3 {
+    color: #172b4d;
+    margin-bottom: 1rem;
+}
+
+/* Styles pour l'historique des modifications */
+.history-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.history-section h3 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.history-section h3 i {
+    color: #0052cc;
+}
+
+.history-item {
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-left: 4px solid #0052cc;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.history-date {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.history-date i {
+    color: #0052cc;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: white;
+}
+
+.badge-success {
+    background-color: #28a745;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+}
+
+.badge-info {
+    background-color: #17a2b8;
+}
+
+.history-content {
+    color: #495057;
+}
+
+.history-content p {
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+}
+
+.changes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.changes-list li {
+    display: flex;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.changes-list li:last-child {
+    margin-bottom: 0;
+}
+
+.changes-list li strong {
+    min-width: 120px;
+    color: #2c3e50;
+}
+
+.change-value {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.old-value {
+    color: #dc3545;
+    text-decoration: line-through;
+}
+
+.new-value {
+    color: #28a745;
+    font-weight: 500;
+}
+
+.change-value i {
+    color: #6c757d;
+}
+
+/* Couleurs spécifiques pour les types de changements */
+.history-change i.fa-plus-circle {
+    color: #28a745;
+}
+
+.history-change i.fa-edit {
+    color: #ffc107;
+}
+
+.history-change i.fa-trash {
+    color: #dc3545;
+}
+
+.history-change i.fa-info-circle {
+    color: #17a2b8;
+}
+
+.priority-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 3px;
+    font-weight: 500;
+}
+
+.priority-faible { background-color: #e3fcef; color: #006644; }
+.priority-moyenne { background-color: #fffae6; color: #974f0c; }
+.priority-elevee { background-color: #ffebe6; color: #bf2600; }
+
+/* Styles pour les détails de modification */
+.change-description,
+.change-date,
+.change-assignee {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border-left: 3px solid #0052cc;
+}
+
+.change-description strong,
+.change-date strong,
+.change-assignee strong {
+    display: block;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.change-description p,
+.change-date p,
+.change-assignee p {
+    margin: 0;
+    color: #495057;
+    line-height: 1.5;
+}
+
+.change-description {
+    border-left-color: #36b37e;
+}
+
+.change-date {
+    border-left-color: #ffc107;
+}
+
+.change-assignee {
+    border-left-color: #0052cc;
+}
+
+.changes-summary {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px dashed #dee2e6;
+    color: #0052cc;
+    font-weight: 600;
+}
+
+.changes-highlight {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 0.75rem;
+}
+
+.changes-highlight li {
+    background-color: white;
+    border: 1px solid #e9ecef;
+    margin-bottom: 0.5rem;
+}
+
+.changes-highlight li:last-child {
+    margin-bottom: 0;
+}
+
+.changes-highlight .old-value {
+    color: #dc3545;
+    text-decoration: line-through;
+    background-color: #fff5f5;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+}
+
+.changes-highlight .new-value {
+    color: #28a745;
+    font-weight: 500;
+    background-color: #f0fff4;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+}
+
+.changes-highlight .change-value i {
+    color: #6c757d;
+    margin: 0 0.5rem;
+} 

@@ -1,0 +1,213 @@
+<!-- Mon tableau de gestion de tâches personnalisé -->
+<div class="board-container">
+    <h1>Mon Tableau de Tâches</h1>
+    
+    <!-- Formulaire d'ajout de tâche -->
+    <div class="add-task-form">
+        <form id="todo-form" method="POST">
+            <div class="form-group">
+                <input
+                    type="text"
+                    id="todo-input"
+                    name="title"
+                    placeholder="Quelle est votre nouvelle tâche ?"
+                    required
+                />
+                <div id="error-titre" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <textarea
+                    id="todo-description"
+                    name="description"
+                    placeholder="Décrivez votre tâche en quelques mots..."
+                    rows="3"
+                ></textarea>
+                <div id="error-description" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <select id="todo-priority" name="priority" required>
+                    <option value="Faible">Priorité Faible</option>
+                    <option value="Moyenne" selected>Priorité Moyenne</option>
+                    <option value="Élevée">Priorité Élevée</option>
+                </select>
+                <div id="error-priorite" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <input
+                    type="datetime-local"
+                    id="todo-due-date"
+                    name="dueDate"
+                    required
+                />
+                <div id="error-date" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <input
+                    type="text"
+                    id="todo-assigned-to"
+                    name="assignedTo"
+                    placeholder="Qui est responsable de cette tâche ?"
+                />
+                <div id="error-assigne" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <select id="todo-status" name="status" required>
+                    <option value="A faire" selected>À Faire</option>
+                    <option value="En cours">En Cours</option>
+                    <option value="En revision">En Révision</option>
+                    <option value="Terminee">Terminée</option>
+                </select>
+                <div id="error-statut" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <button type="submit">Créer la Tâche</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Mon tableau de tâches -->
+    <div class="board">
+        <!-- Colonne À Faire -->
+        <div class="column">
+            <h2>À Faire</h2>
+            <ul class="task-list" data-status="A faire">
+                {{#each todos}}
+                    {{#if (eq this.status "A faire")}}
+                        <li class="todo-item" draggable="true" data-id="{{this.id}}">
+                            <div class="card-content">
+                                <h3 class="title">{{this.title}}</h3>
+                                <p class="description">{{this.description}}</p>
+                                <div class="task-details">
+                                    <span class="priority priority-{{toLowerCase this.priority}}">{{this.priority}}</span>
+                                    {{#if this.dueDate}}
+                                        <span class="due-date">📅 {{formatDate this.dueDate}}</span>
+                                    {{/if}}
+                                    {{#if this.assignedTo}}
+                                        <span class="assigned-to">👤 {{this.assignedTo}}</span>
+                                    {{/if}}
+                                </div>
+                                <div class="task-actions">
+                                    <button class="history-btn" type="button" aria-label="Voir l'historique" data-id="{{this.id}}">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                </div>
+                            </div>
+                        </li>
+                    {{/if}}
+                {{/each}}
+            </ul>
+        </div>
+
+        <!-- Colonne En Cours -->
+        <div class="column">
+            <h2>En Cours</h2>
+            <ul class="task-list" data-status="En cours">
+                {{#each todos}}
+                    {{#if (eq this.status "En cours")}}
+                        <li class="todo-item" draggable="true" data-id="{{this.id}}">
+                            <div class="card-content">
+                                <h3 class="title">{{this.title}}</h3>
+                                <p class="description">{{this.description}}</p>
+                                <div class="task-details">
+                                    <span class="priority priority-{{toLowerCase this.priority}}">{{this.priority}}</span>
+                                    {{#if this.dueDate}}
+                                        <span class="due-date">📅 {{formatDate this.dueDate}}</span>
+                                    {{/if}}
+                                    {{#if this.assignedTo}}
+                                        <span class="assigned-to">👤 {{this.assignedTo}}</span>
+                                    {{/if}}
+                                </div>
+                                <div class="task-actions">
+                                    <button class="history-btn" type="button" aria-label="Voir l'historique" data-id="{{this.id}}">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                </div>
+                            </div>
+                        </li>
+                    {{/if}}
+                {{/each}}
+            </ul>
+        </div>
+
+        <!-- Colonne En Révision -->
+        <div class="column">
+            <h2>En Révision</h2>
+            <ul class="task-list" data-status="En revision">
+                {{#each todos}}
+                    {{#if (eq this.status "En revision")}}
+                        <li class="todo-item" draggable="true" data-id="{{this.id}}">
+                            <div class="card-content">
+                                <h3 class="title">{{this.title}}</h3>
+                                <p class="description">{{this.description}}</p>
+                                <div class="task-details">
+                                    <span class="priority priority-{{toLowerCase this.priority}}">{{this.priority}}</span>
+                                    {{#if this.dueDate}}
+                                        <span class="due-date">📅 {{formatDate this.dueDate}}</span>
+                                    {{/if}}
+                                    {{#if this.assignedTo}}
+                                        <span class="assigned-to">👤 {{this.assignedTo}}</span>
+                                    {{/if}}
+                                </div>
+                                <div class="task-actions">
+                                    <button class="history-btn" type="button" aria-label="Voir l'historique" data-id="{{this.id}}">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                </div>
+                            </div>
+                        </li>
+                    {{/if}}
+                {{/each}}
+            </ul>
+        </div>
+
+        <!-- Colonne Terminée -->
+        <div class="column">
+            <h2>Terminée</h2>
+            <ul class="task-list" data-status="Terminee">
+                {{#each todos}}
+                    {{#if (eq this.status "Terminee")}}
+                        <li class="todo-item" draggable="true" data-id="{{this.id}}">
+                            <div class="card-content">
+                                <h3 class="title">{{this.title}}</h3>
+                                <p class="description">{{this.description}}</p>
+                                <div class="task-details">
+                                    <span class="priority priority-{{toLowerCase this.priority}}">{{this.priority}}</span>
+                                    {{#if this.dueDate}}
+                                        <span class="due-date">📅 {{formatDate this.dueDate}}</span>
+                                    {{/if}}
+                                    {{#if this.assignedTo}}
+                                        <span class="assigned-to">👤 {{this.assignedTo}}</span>
+                                    {{/if}}
+                                </div>
+                                <div class="task-actions">
+                                    <button class="history-btn" type="button" aria-label="Voir l'historique" data-id="{{this.id}}">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    <button class="delete-btn" type="button" aria-label="Supprimer la tâche" data-id="{{this.id}}">×</button>
+                                </div>
+                            </div>
+                        </li>
+                    {{/if}}
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Fenêtre modale pour l'historique -->
+<div id="history-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Historique des Modifications</h2>
+            <button class="close-modal">&times;</button>
+        </div>
+        <div id="history-list" class="history-list">
+            <!-- Le contenu sera injecté dynamiquement par JavaScript -->
+        </div>
+    </div>
+</div>
+
+<script src="/js/history.js"></script>

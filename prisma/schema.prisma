@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Statut {
+  id          Int       @id @default(autoincrement())
+  nom         String    @unique
+  taches      Tache[]
+  dateCreation DateTime @default(now())
+  dateMaj     DateTime @updatedAt
+}
+
+model Priorite {
+  id          Int       @id @default(autoincrement())
+  nom         String    @unique
+  taches      Tache[]
+  dateCreation DateTime @default(now())
+  dateMaj     DateTime @updatedAt
+}
+
+model HistoriqueTache {
+  id            Int       @id @default(autoincrement())
+  tacheId       Int       // ID de la tâche modifiée
+  titre         String    // État de la tâche au moment du changement
+  description   String?
+  statut        String
+  priorite      String
+  dateEcheance  BigInt?
+  assigneA      String?
+  typeChangement String    // Type de changement (CREATION, MODIFICATION, SUPPRESSION)
+  modifiePar    String?    // Utilisateur ayant effectué le changement
+  dateCreation  DateTime   @default(now())
+  
+  tache         Tache     @relation(fields: [tacheId], references: [id], onDelete: Cascade)
+}
+
+model Tache {
+  id            Int       @id @default(autoincrement())
+  titre         String
+  description   String?
+  statut        Statut    @relation(fields: [statutId], references: [id])
+  statutId      Int
+  priorite      Priorite  @relation(fields: [prioriteId], references: [id])
+  prioriteId    Int
+  dateEcheance  BigInt?   // Timestamp EPOCH en millisecondes
+  assigneA      String?   // Nom/identifiant du membre de l'équipe
+  dateCreation  DateTime  @default(now())
+  dateMaj       DateTime  @updatedAt
+  historique    HistoriqueTache[]
+}

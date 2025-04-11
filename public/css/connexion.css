@@ -1,0 +1,9 @@
+.form-authentification,
+.form-authentification label {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-authentification {
+    gap: 1rem;
+}

@@ -75,6 +75,16 @@
                     <a href="/">Accueil</a>
                     <a href="/board">Tableau des Tâches</a>
                     <a href="/contact">Contact</a>
+                      {{#if user}}
+            
+            <form action="/deconnexion" method="post">
+                <input type="submit" value="Déconnexion" />
+            </form>
+        {{/if}}
+
+        {{#unless user}}
+            <a href="/connexion">Connexion</a>
+        {{/unless}}
                 </div>
             </div>
         </nav>

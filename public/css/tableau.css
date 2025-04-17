@@ -1,0 +1,22 @@
+/* Styles spécifiques pour le tableau des tâches */
+.todo-item {
+    cursor: pointer;
+    position: relative;
+}
+
+.todo-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.drag-handle {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    cursor: grab;
+    color: #6b778c;
+    padding: 4px;
+}
+
+.drag-handle:hover {
+    color: #172b4d;
+} 

@@ -1,7 +1,8 @@
+<!-- Mon tableau de gestion de tâches personnalisé -->
 <div class="board-container">
-    <h1>Tableau de bord</h1>
+    <h1>Mon Tableau de Tâches</h1>
     
-    <!-- Formulaire pour ajouter des tâches -->
+    <!-- Formulaire d'ajout de tâche -->
     <div class="add-task-form">
         <form id="todo-form" method="POST">
             <div class="form-group">
@@ -9,7 +10,7 @@
                     type="text"
                     id="todo-input"
                     name="title"
-                    placeholder="Titre de la tâche"
+                    placeholder="Quelle est votre nouvelle tâche ?"
                     required
                 />
                 <div id="error-titre" class="error-message"></div>
@@ -18,15 +19,16 @@
                 <textarea
                     id="todo-description"
                     name="description"
-                    placeholder="Description de la tâche (optionnel)"
+                    placeholder="Décrivez votre tâche en quelques mots..."
+                    rows="3"
                 ></textarea>
                 <div id="error-description" class="error-message"></div>
             </div>
             <div class="form-group">
                 <select id="todo-priority" name="priority" required>
-                    <option value="Faible">Faible</option>
-                    <option value="Moyenne" selected>Moyenne</option>
-                    <option value="Élevée">Élevée</option>
+                    <option value="Faible">Priorité Faible</option>
+                    <option value="Moyenne" selected>Priorité Moyenne</option>
+                    <option value="Élevée">Priorité Élevée</option>
                 </select>
                 <div id="error-priorite" class="error-message"></div>
             </div>
@@ -44,30 +46,30 @@
                     type="text"
                     id="todo-assigned-to"
                     name="assignedTo"
-                    placeholder="Assigné à"
+                    placeholder="Qui est responsable de cette tâche ?"
                 />
                 <div id="error-assigne" class="error-message"></div>
             </div>
             <div class="form-group">
                 <select id="todo-status" name="status" required>
-                    <option value="A faire" selected>À faire</option>
-                    <option value="En cours">En cours</option>
-                    <option value="En revision">En révision</option>
+                    <option value="A faire" selected>À Faire</option>
+                    <option value="En cours">En Cours</option>
+                    <option value="En revision">En Révision</option>
                     <option value="Terminee">Terminée</option>
                 </select>
                 <div id="error-statut" class="error-message"></div>
             </div>
             <div class="form-group">
-                <button type="submit">Ajouter une tâche</button>
+                <button type="submit">Créer la Tâche</button>
             </div>
         </form>
     </div>
 
-    <!-- Colonnes du tableau -->
+    <!-- Mon tableau de tâches -->
     <div class="board">
-        <!-- Colonne "À faire" -->
+        <!-- Colonne À Faire -->
         <div class="column">
-            <h2>À faire</h2>
+            <h2>À Faire</h2>
             <ul class="task-list" data-status="A faire">
                 {{#each todos}}
                     {{#if (eq this.status "A faire")}}
@@ -78,10 +80,10 @@
                                 <div class="task-details">
                                     <span class="priority priority-{{toLowerCase this.priority}}">{{this.priority}}</span>
                                     {{#if this.dueDate}}
-                                        <span class="due-date">Échéance: {{formatDate this.dueDate}}</span>
+                                        <span class="due-date">📅 {{formatDate this.dueDate}}</span>
                                     {{/if}}
                                     {{#if this.assignedTo}}
-                                        <span class="assigned-to">Assigné à: {{this.assignedTo}}</span>
+                                        <span class="assigned-to">👤 {{this.assignedTo}}</span>
                                     {{/if}}
                                 </div>
                                 <div class="task-actions">
@@ -97,9 +99,9 @@
             </ul>
         </div>
 
-        <!-- Colonne "En cours" -->
+        <!-- Colonne En Cours -->
         <div class="column">
-            <h2>En cours</h2>
+            <h2>En Cours</h2>
             <ul class="task-list" data-status="En cours">
                 {{#each todos}}
                     {{#if (eq this.status "En cours")}}
@@ -110,10 +112,10 @@
                                 <div class="task-details">
                                     <span class="priority priority-{{toLowerCase this.priority}}">{{this.priority}}</span>
                                     {{#if this.dueDate}}
-                                        <span class="due-date">Échéance: {{formatDate this.dueDate}}</span>
+                                        <span class="due-date">📅 {{formatDate this.dueDate}}</span>
                                     {{/if}}
                                     {{#if this.assignedTo}}
-                                        <span class="assigned-to">Assigné à: {{this.assignedTo}}</span>
+                                        <span class="assigned-to">👤 {{this.assignedTo}}</span>
                                     {{/if}}
                                 </div>
                                 <div class="task-actions">
@@ -129,9 +131,9 @@
             </ul>
         </div>
 
-        <!-- Colonne "En révision" -->
+        <!-- Colonne En Révision -->
         <div class="column">
-            <h2>En révision</h2>
+            <h2>En Révision</h2>
             <ul class="task-list" data-status="En revision">
                 {{#each todos}}
                     {{#if (eq this.status "En revision")}}
@@ -142,10 +144,10 @@
                                 <div class="task-details">
                                     <span class="priority priority-{{toLowerCase this.priority}}">{{this.priority}}</span>
                                     {{#if this.dueDate}}
-                                        <span class="due-date">Échéance: {{formatDate this.dueDate}}</span>
+                                        <span class="due-date">📅 {{formatDate this.dueDate}}</span>
                                     {{/if}}
                                     {{#if this.assignedTo}}
-                                        <span class="assigned-to">Assigné à: {{this.assignedTo}}</span>
+                                        <span class="assigned-to">👤 {{this.assignedTo}}</span>
                                     {{/if}}
                                 </div>
                                 <div class="task-actions">
@@ -161,9 +163,9 @@
             </ul>
         </div>
 
-        <!-- Colonne "Terminé" -->
+        <!-- Colonne Terminée -->
         <div class="column">
-            <h2>Terminé</h2>
+            <h2>Terminée</h2>
             <ul class="task-list" data-status="Terminee">
                 {{#each todos}}
                     {{#if (eq this.status "Terminee")}}
@@ -174,10 +176,10 @@
                                 <div class="task-details">
                                     <span class="priority priority-{{toLowerCase this.priority}}">{{this.priority}}</span>
                                     {{#if this.dueDate}}
-                                        <span class="due-date">Échéance: {{formatDate this.dueDate}}</span>
+                                        <span class="due-date">📅 {{formatDate this.dueDate}}</span>
                                     {{/if}}
                                     {{#if this.assignedTo}}
-                                        <span class="assigned-to">Assigné à: {{this.assignedTo}}</span>
+                                        <span class="assigned-to">👤 {{this.assignedTo}}</span>
                                     {{/if}}
                                 </div>
                                 <div class="task-actions">
@@ -195,11 +197,11 @@
     </div>
 </div>
 
-<!-- Modale pour l'historique -->
+<!-- Fenêtre modale pour l'historique -->
 <div id="history-modal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2>Historique de la tâche</h2>
+            <h2>Historique des Modifications</h2>
             <button class="close-modal">&times;</button>
         </div>
         <div id="history-list" class="history-list">
@@ -207,42 +209,5 @@
         </div>
     </div>
 </div>
-
-<style>
-/* Styles pour les boutons d'action */
-.task-actions {
-    display: flex;
-    gap: 8px;
-    position: absolute;
-    top: 8px;
-    right: 8px;
-}
-
-.history-btn {
-    background: none;
-    border: none;
-    color: #666;
-    cursor: pointer;
-    padding: 4px;
-    font-size: 16px;
-}
-
-.history-btn:hover {
-    color: #333;
-}
-
-/* Styles pour les messages d'erreur */
-.error-message {
-    color: #dc3545;
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
-    min-height: 1.25rem;
-}
-
-.form-group {
-    margin-bottom: 1rem;
-    position: relative;
-}
-</style>
 
 <script src="/js/history.js"></script>

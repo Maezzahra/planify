@@ -18,3 +18,10 @@ export const isPasswordValid = (password) =>
     typeof password === "string" &&
     password.length >= 8 &&
     password.length <= 16;
+
+// verifier si le nom est valide
+export const isNameValid = (nom) =>
+    nom &&
+    typeof nom === "string" &&
+    nom.length >= 2 &&
+    nom.length <= 50;

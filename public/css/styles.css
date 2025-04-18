@@ -1,22 +1,118 @@
-/* Style personnalisé pour mon application de gestion de tâches */
+/* Reset et styles de base */
 body {
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Quicksand', 'Segoe UI', sans-serif;
     margin: 0;
-    padding: 20px;
-    background-color: #f8f9fa;
-    color: #2c3e50;
+    padding: 0;
+    background-color: #f5f7fa;
+    color: #5d6778;
+}
+
+/* Header styles */
+.main-header {
+    background-color: #1a1a1a;
+    padding: 1rem 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.main-nav {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    transition: color 0.3s;
+}
+
+.nav-link:hover {
+    color: #3498db;
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.user-email {
+    color: white;
+    margin-right: 1rem;
+}
+
+.btn-connexion, .btn-inscription, .btn-deconnexion {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.btn-connexion {
+    background-color: #3498db;
+}
+
+.btn-connexion:hover {
+    background-color: #2980b9;
+}
+
+.btn-inscription {
+    background-color: #2ecc71;
+}
+
+.btn-inscription:hover {
+    background-color: #27ae60;
+}
+
+.btn-deconnexion {
+    background-color: #e74c3c;
+}
+
+.btn-deconnexion:hover {
+    background-color: #c0392b;
+}
+
+/* Main content */
+main {
+    min-height: calc(100vh - 140px);
+    padding: 2rem 0;
 }
 
 .board-container {
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 0 2rem;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: #1a1a1a;
+    color: white;
 }
 
 h1 {
     text-align: center;
     color: #2c3e50;
-    margin-bottom: 30px;
+    margin: 2rem 0;
     font-size: 2.5em;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -25,116 +121,142 @@ h1 {
 /* Style du tableau */
 .board {
     display: flex;
-    gap: 25px;
+    gap: 15px;
     overflow-x: auto;
     padding: 20px 0;
-    scrollbar-width: thin;
+    min-height: 500px;
 }
 
 .column {
     flex: 1;
-    min-width: 300px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    padding: 15px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    min-width: 250px;
+    max-width: 280px;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+/* Couleurs poudrées pour chaque colonne */
+.column:nth-child(1) {
+    background: #F5E6E8; /* Rose poudré */
+}
+
+.column:nth-child(2) {
+    background: #E6E6FA; /* Lavande clair */
+}
+
+.column:nth-child(3) {
+    background: #F0E6DD; /* Beige rosé */
+}
+
+.column:nth-child(4) {
+    background: #E8F0E6; /* Vert sauge très clair */
 }
 
 .column h2 {
-    font-size: 18px;
-    margin: 0 0 15px 0;
-    padding: 10px;
-    color: #34495e;
-    border-bottom: 2px solid #3498db;
+    color: #172b4d;
+    font-size: 15px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
 .task-list {
     list-style: none;
     padding: 0;
     margin: 0;
-    min-height: 120px;
+    min-height: 100px;
 }
 
 /* Style des cartes */
 .todo-item {
-    background: #ffffff;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    cursor: grab;
-    border: 1px solid #e0e0e0;
-    transition: transform 0.2s, box-shadow 0.2s;
+    background: white;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
 }
 
 .todo-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
 }
 
 .todo-item.dragging {
-    opacity: 0.7;
-    cursor: grabbing;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-}
-
-.card-content {
-    position: relative;
+    opacity: 0.9;
+    transform: rotate(2deg);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
 }
 
 .title {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0 0 10px 0;
-    color: #2c3e50;
+    font-size: 14px;
+    font-weight: 500;
+    color: #172b4d;
+    margin: 0 0 8px 0;
 }
 
 .description {
-    font-size: 14px;
-    color: #7f8c8d;
-    margin: 0 0 12px 0;
-    line-height: 1.5;
+    font-size: 12px;
+    color: #6b778c;
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+}
+
+/* Style des priorités */
+.priority {
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 500;
+    font-size: 11px;
+}
+
+.priority-faible {
+    background-color: #E3FCEF;
+    color: #006644;
+}
+
+.priority-moyenne {
+    background-color: #DEEBFF;
+    color: #0747A6;
+}
+
+.priority-elevee {
+    background-color: #FFEBE6;
+    color: #BF2600;
+}
+
+/* Style des dates et assignations */
+.due-date, .assigned-to {
+    color: #6b778c;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .task-details {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    font-size: 13px;
-}
-
-/* Style des priorités */
-.priority {
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-weight: 500;
-    text-transform: uppercase;
-    font-size: 12px;
-    letter-spacing: 0.5px;
-}
-
-.priority-faible {
-    background-color: #d4f8e8;
-    color: #27ae60;
-}
-
-.priority-moyenne {
-    background-color: #fff3cd;
-    color: #f39c12;
-}
-
-.priority-elevee {
-    background-color: #f8d7da;
-    color: #e74c3c;
-}
-
-/* Style des dates et assignations */
-.due-date, .assigned-to {
-    color: #7f8c8d;
-    display: flex;
+    gap: 8px;
     align-items: center;
-    gap: 6px;
-    font-size: 12px;
+}
+
+/* Style du drag handle */
+.drag-handle {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    cursor: grab;
+    color: #dfe1e6;
+    padding: 4px;
+    transition: color 0.2s ease;
+}
+
+.todo-item:hover .drag-handle {
+    color: #6b778c;
 }
 
 /* Style du formulaire */
@@ -367,4 +489,97 @@ h1 {
         width: 95%;
         margin: 20px auto;
     }
+}
+
+/* Styles d'authentification */
+.auth-container {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.auth-container h3 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.form-group input {
+    padding: 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.auth-button {
+    background-color: #3498db;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.auth-button:hover {
+    background-color: #2980b9;
+}
+
+.auth-links-bottom {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.auth-links-bottom a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.auth-links-bottom a:hover {
+    text-decoration: underline;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.alert-danger {
+    background-color: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.alert-success {
+    background-color: #dcfce7;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
 } 

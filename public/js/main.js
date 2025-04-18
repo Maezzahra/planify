@@ -168,25 +168,20 @@ const addTodoToServer = async (event) => {
         return;
     }
 
-    const titre = titleInput.value.trim();
-    const description = descriptionInput.value.trim();
-    const priorite = prioritySelect.value;
-    const dateEcheance = dueDateInput.value ? new Date(dueDateInput.value).getTime() : null;
-    const assigneA = assignedToInput.value.trim();
-    const statut = statusSelect.value;
+    const todoData = {
+        titre: titleInput.value.trim(),
+        description: descriptionInput.value.trim(),
+        priorite: prioritySelect.value,
+        dateEcheance: new Date(dueDateInput.value).toISOString(),
+        assigneA: assignedToInput.value.trim(),
+        statut: statusSelect.value
+    };
 
     try {
         const response = await fetch("/api/todo", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                titre,
-                description,
-                priorite,
-                dateEcheance,
-                assigneA,
-                statut
-            }),
+            body: JSON.stringify(todoData),
         });
 
         if (!response.ok) {
@@ -195,12 +190,19 @@ const addTodoToServer = async (event) => {
         }
 
         const data = await response.json();
-        addTodoToDOM(data.todo);
         
-        // Réinitialisation du formulaire
-        todoForm.reset();
+        if (data.todo) {
+            addTodoToDOM(data.todo);
+            // Réinitialisation du formulaire
+            todoForm.reset();
+            // Fermeture de la modale si elle existe
+            const modal = document.querySelector('.modal');
+            if (modal) modal.style.display = 'none';
+        } else {
+            throw new Error(data.message || "Erreur lors de l'ajout de la tâche");
+        }
     } catch (error) {
-        console.error("Erreur détaillée:", error);
+        console.error("Erreur lors de l'ajout de la tâche:", error);
         showError(error.message || "Une erreur est survenue lors de l'ajout de la tâche");
     }
 };

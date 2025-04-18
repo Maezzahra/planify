@@ -31,20 +31,40 @@ const containsNumbers = (str) => {
     return /\d/.test(str);
 };
 
+// Fonction utilitaire pour vérifier si une chaîne contient des caractères spéciaux
+const containsSpecialChars = (str) => {
+    return /[!@#$%^&*(),.?":{}|<>]/.test(str);
+};
+
+// Fonction utilitaire pour nettoyer les entrées
+const sanitizeInput = (input) => {
+    return input.trim().replace(/[<>]/g, '');
+};
+
 // Validation du titre
 export const validateTitle = (title) => {
     if (!title || typeof title !== 'string') {
         showError(titleError, 'Le titre est requis');
         return false;
     }
-    if (title.length < 5) {
-        showError(titleError, 'Le titre doit contenir au moins 5 caractères');
+
+    const cleanTitle = sanitizeInput(title);
+
+    if (cleanTitle.length < 5 || cleanTitle.length > 100) {
+        showError(titleError, 'Le titre doit contenir entre 5 et 100 caractères');
         return false;
     }
-    if (containsNumbers(title)) {
+
+    if (containsNumbers(cleanTitle)) {
         showError(titleError, 'Le titre ne doit pas contenir de chiffres');
         return false;
     }
+
+    if (containsSpecialChars(cleanTitle)) {
+        showError(titleError, 'Le titre ne doit pas contenir de caractères spéciaux');
+        return false;
+    }
+
     showError(titleError, '');
     return true;
 };
@@ -55,14 +75,19 @@ export const validateDescription = (description) => {
         showError(descriptionError, 'La description est requise');
         return false;
     }
-    if (description.length < 5) {
-        showError(descriptionError, 'La description doit contenir au moins 5 caractères');
+
+    const cleanDescription = sanitizeInput(description);
+
+    if (cleanDescription.length < 5 || cleanDescription.length > 500) {
+        showError(descriptionError, 'La description doit contenir entre 5 et 500 caractères');
         return false;
     }
-    if (containsNumbers(description)) {
+
+    if (containsNumbers(cleanDescription)) {
         showError(descriptionError, 'La description ne doit pas contenir de chiffres');
         return false;
     }
+
     showError(descriptionError, '');
     return true;
 };
@@ -83,16 +108,29 @@ export const validateDueDate = (date) => {
         showError(dueDateError, 'La date d\'échéance est requise');
         return false;
     }
+
     const selectedDate = new Date(date);
     const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time part for accurate date comparison
+
     if (isNaN(selectedDate.getTime())) {
         showError(dueDateError, 'La date d\'échéance n\'est pas valide');
         return false;
     }
+
     if (selectedDate < today) {
         showError(dueDateError, 'La date d\'échéance ne peut pas être dans le passé');
         return false;
     }
+
+    // Vérifier si la date n'est pas trop loin dans le futur (par exemple, 1 an maximum)
+    const oneYearFromNow = new Date();
+    oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+    if (selectedDate > oneYearFromNow) {
+        showError(dueDateError, 'La date d\'échéance ne peut pas être à plus d\'un an dans le futur');
+        return false;
+    }
+
     showError(dueDateError, '');
     return true;
 };
@@ -103,10 +141,24 @@ export const validateAssignedTo = (assignedTo) => {
         showError(assignedToError, 'L\'assigné est requis');
         return false;
     }
-    if (containsNumbers(assignedTo)) {
+
+    const cleanAssignedTo = sanitizeInput(assignedTo);
+
+    if (cleanAssignedTo.length < 2 || cleanAssignedTo.length > 50) {
+        showError(assignedToError, 'Le nom de l\'assigné doit contenir entre 2 et 50 caractères');
+        return false;
+    }
+
+    if (containsNumbers(cleanAssignedTo)) {
         showError(assignedToError, 'Le nom de l\'assigné ne doit pas contenir de chiffres');
         return false;
     }
+
+    if (containsSpecialChars(cleanAssignedTo)) {
+        showError(assignedToError, 'Le nom de l\'assigné ne doit pas contenir de caractères spéciaux');
+        return false;
+    }
+
     showError(assignedToError, '');
     return true;
 };
@@ -123,25 +175,40 @@ export const validateStatus = (status) => {
 
 // Validation complète du formulaire
 export const validateTodoForm = () => {
-    if (!titleInput || !descriptionInput || !priorityInput || !dueDateInput || !assignedToInput || !statusInput) {
-        console.error('Éléments du formulaire manquants');
+    try {
+        if (!titleInput || !descriptionInput || !priorityInput || !dueDateInput || !assignedToInput || !statusInput) {
+            console.error('Éléments du formulaire manquants');
+            return false;
+        }
+
+        const title = titleInput.value;
+        const description = descriptionInput.value;
+        const priority = priorityInput.value;
+        const dueDate = dueDateInput.value;
+        const assignedTo = assignedToInput.value;
+        const status = statusInput.value;
+
+        // Nettoyer les entrées
+        const cleanTitle = sanitizeInput(title);
+        const cleanDescription = sanitizeInput(description);
+        const cleanAssignedTo = sanitizeInput(assignedTo);
+
+        // Mettre à jour les valeurs nettoyées dans le formulaire
+        titleInput.value = cleanTitle;
+        descriptionInput.value = cleanDescription;
+        assignedToInput.value = cleanAssignedTo;
+
+        const isTitleValid = validateTitle(cleanTitle);
+        const isDescriptionValid = validateDescription(cleanDescription);
+        const isPriorityValid = validatePriority(priority);
+        const isDueDateValid = validateDueDate(dueDate);
+        const isAssignedToValid = validateAssignedTo(cleanAssignedTo);
+        const isStatusValid = validateStatus(status);
+
+        return isTitleValid && isDescriptionValid && isPriorityValid && 
+               isDueDateValid && isAssignedToValid && isStatusValid;
+    } catch (error) {
+        console.error('Erreur lors de la validation du formulaire:', error);
         return false;
     }
-
-    const title = titleInput.value;
-    const description = descriptionInput.value;
-    const priority = priorityInput.value;
-    const dueDate = dueDateInput.value;
-    const assignedTo = assignedToInput.value;
-    const status = statusInput.value;
-
-    const isTitleValid = validateTitle(title);
-    const isDescriptionValid = validateDescription(description);
-    const isPriorityValid = validatePriority(priority);
-    const isDueDateValid = validateDueDate(dueDate);
-    const isAssignedToValid = validateAssignedTo(assignedTo);
-    const isStatusValid = validateStatus(status);
-
-    return isTitleValid && isDescriptionValid && isPriorityValid && 
-           isDueDateValid && isAssignedToValid && isStatusValid;
 }; 

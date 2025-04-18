@@ -1,5 +1,8 @@
 import "dotenv/config";
 
+import https from 'node:https';
+import { readFile } from 'node:fs/promises';
+
 //importer les routes
 import routerExterne from "./routes.js";
 
@@ -19,7 +22,7 @@ import passport from "passport";
 
 import "./authentification.js";
 
-// Crréation du serveur express
+// Création du serveur express
 const app = express();
 
 //initialisation de la base de données de session
@@ -68,7 +71,6 @@ app.use(cors());
 app.use(json());
 
 //Ajout des middlewares pour gérer les sessions
-
 app.use(
     session({
     cookie: { maxAge: 3600000 },
@@ -94,7 +96,19 @@ app.use((request, response) => {
     response.status(404).send(`${request.originalUrl} Route introuvable.`);
 });
 
-//Démarrage du serveur
-app.listen(process.env.PORT);
-console.info("Serveur démarré :");
-console.info(`http://localhost:${process.env.PORT}`);
+//Demarrer le serveur
+//Usage du HTTPS
+if (process.env.NODE_ENV === "development") {
+    let credentials = {
+        key: await readFile("./security/localhost.key"),
+        cert: await readFile("./security/localhost.cert"),
+    };
+    
+    https.createServer(credentials, app).listen(process.env.PORT);
+    console.info("Serveur démarré avec succès: ");
+    console.log("https://localhost:" + process.env.PORT);
+} else {
+    app.listen(process.env.PORT);
+    console.info("Serveur démarré avec succès: ");
+    console.info("http://localhost:" + process.env.PORT);
+}

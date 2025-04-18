@@ -11,9 +11,143 @@ import {
 } from "./model/todo.js";
 import { PrismaClient } from "@prisma/client";
 import { validateTodo } from './model/validations/todoValidations.js';
+import { isEmailValid, isPasswordValid, isNameValid } from './validation.js';
+import { addUser, getUserByEmail } from './model/user.js';
+import bcrypt from 'bcrypt';
 
 const router = Router();
 const prisma = new PrismaClient();
+//Definition des routes
+
+//Route pour la connexion
+router.post("/connexion", async (request, response) => {
+    try {
+        const { email, password } = request.body;
+        
+        // Validation des données
+        if (!isEmailValid(email) || !isPasswordValid(password)) {
+            return response.status(400).json({
+                error: "Email ou mot de passe invalide"
+            });
+        }
+
+        // Vérifier si l'utilisateur existe
+        const user = await getUserByEmail(email);
+        if (!user) {
+            return response.status(401).json({
+                error: "Email ou mot de passe incorrect"
+            });
+        }
+
+        // Vérifier le mot de passe
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) {
+            return response.status(401).json({
+                error: "Email ou mot de passe incorrect"
+            });
+        }
+
+        // Créer la session
+        request.session.user = user;
+
+        response.status(200).json({
+            message: "Connexion réussie",
+            user
+        });
+    } catch (error) {
+        console.error("Erreur de connexion:", error);
+        response.status(500).json({
+            error: "Erreur lors de la connexion"
+        });
+    }
+});
+
+//Route deconnexion
+router.get("/deconnexion", (request, response) => {
+    if (!request.session.user) {
+        return response.redirect("/connexion");
+    }
+    
+    request.session.destroy((err) => {
+        if (err) {
+            console.error("Erreur lors de la destruction de la session:", err);
+        }
+        response.redirect("/connexion");
+    });
+});
+
+//Route pour inscrire un utilisateur
+router.post("/inscription", async (request, response) => {
+    try {
+        const { email, password, nom } = request.body;
+        
+        // Validation des données
+        if (!isEmailValid(email)) {
+            return response.status(400).json({ 
+                error: "Email invalide" 
+            });
+        }
+        
+        if (!isPasswordValid(password)) {
+            return response.status(400).json({ 
+                error: "Mot de passe invalide (doit contenir entre 8 et 16 caractères)" 
+            });
+        }
+        
+        if (!isNameValid(nom)) {
+            return response.status(400).json({ 
+                error: "Nom invalide (doit contenir entre 2 et 50 caractères)" 
+            });
+        }
+
+        const user = await addUser(email, password, nom);
+        return response.status(200).json({
+            user,
+            message: "Utilisateur ajouté avec succès"
+        });
+    } catch (error) {
+        return response.status(400).json({ error: error.message });
+    }
+});
+
+// Middleware pour rendre l'utilisateur disponible dans tous les templates
+router.use((request, response, next) => {
+    response.locals.user = request.session.user;
+    next();
+});
+
+// Route pour afficher la page de connexion
+router.get("/connexion", (request, response) => {
+    if (request.session.user) {
+        return response.redirect("/");
+    }
+    response.render("connexion", {
+        titre: "Connexion",
+        styles: ["./css/styles.css"]
+    });
+});
+
+// Route pour afficher la page d'inscription
+router.get("/inscription", (request, response) => {
+    if (request.session.user) {
+        return response.redirect("/");
+    }
+    response.render("inscription", {
+        titre: "Inscription",
+        styles: ["./css/styles.css"]
+    });
+});
+
+// Route pour afficher la page de déconnexion
+router.get("/deconnexion", (request, response) => {
+    if (!request.session.user) {
+        return response.redirect("/connexion");
+    }
+    response.render("deconnexion", {
+        titre: "Déconnexion",
+        styles: ["./css/styles.css"]
+    });
+});
 
 // Fonction simple pour convertir les dates en chaînes de caractères
 const formatDate = (date) => {
@@ -28,18 +162,12 @@ const formatDate = (date) => {
 };
 
 // Fonction utilitaire pour sérialiser les BigInt
-const serializeBigInt = (obj) => {
-    if (obj === null || obj === undefined) return obj;
-    if (typeof obj === 'bigint') return obj.toString();
-    if (Array.isArray(obj)) return obj.map(serializeBigInt);
-    if (typeof obj === 'object') {
-        const result = {};
-        for (const key in obj) {
-            result[key] = serializeBigInt(obj[key]);
-        }
-        return result;
-    }
-    return obj;
+const serializeBigInt = (data) => {
+    return JSON.parse(JSON.stringify(data, (key, value) =>
+        typeof value === 'bigint'
+            ? value.toString()
+            : value
+    ));
 };
 
 // Page d'accueil - Affiche la liste des tâches
@@ -48,7 +176,7 @@ router.get("/", async (request, response) => {
         const taches = await getTodos();
         response.render("index", {
             titre: "Accueil",
-            styles: ["./css/style.css", "./css/index.css", "./css/modal.css"],
+            styles: ["./css/styles.css"],
             scripts: ["./js/main.js"],
             taches: taches
         });
@@ -143,70 +271,46 @@ router.get("/api/priorities", async (request, response) => {
     }
 });
 
-// API pour ajouter une nouvelle tâche
-router.post("/api/todo", async (req, res) => {
+// Route pour ajouter une tâche
+router.post('/api/todo', async (req, res) => {
     try {
-        // Validation des données
-        const validation = validateTodo(req.body);
-        if (!validation.isValid) {
-            return res.status(400).json({ message: validation.errors.join(', ') });
+        // Vérifier si l'utilisateur est connecté
+        if (!req.session.user) {
+            return res.status(401).json({ message: "Vous devez être connecté pour ajouter une tâche" });
         }
 
-        // Récupérer le statut et la priorité
-        const [status, priority] = await Promise.all([
-            prisma.statut.findUnique({
-                where: { nom: req.body.statut }
-            }),
-            prisma.priorite.findUnique({
-                where: { nom: req.body.priorite }
-            })
-        ]);
+        const { titre, description, priorite, dateEcheance, assigneA, statut } = req.body;
 
-        if (!status || !priority) {
-            return res.status(400).json({ message: "Statut ou priorité invalide" });
+        // Validation des champs requis
+        if (!titre || !description || !priorite || !dateEcheance || !statut) {
+            return res.status(400).json({ message: "Tous les champs requis doivent être remplis" });
         }
 
-        // Créer la tâche
-        const todo = await prisma.tache.create({
-            data: {
-                titre: req.body.titre,
-                description: req.body.description,
-                statutId: status.id,
-                prioriteId: priority.id,
-                dateEcheance: BigInt(new Date(req.body.dateEcheance).getTime()),
-                assigneA: req.body.assigneA
-            },
-            include: {
-                statut: true,
-                priorite: true
-            }
-        });
-
-        // Créer l'entrée dans l'historique
-        await prisma.historiqueTache.create({
-            data: {
-                tacheId: todo.id,
-                typeChangement: "CREATION",
-                titre: todo.titre,
-                description: todo.description,
-                priorite: priority.nom,
-                dateEcheance: todo.dateEcheance,
-                assigneA: todo.assigneA,
-                statut: status.nom,
-            },
-        });
-
-        // Formater la réponse
-        const responseTodo = {
-            ...todo,
-            statut: status.nom,
-            priorite: priority.nom
+        // Préparation des données pour addTodo
+        const todoData = {
+            titre,
+            description,
+            priorite,
+            dateEcheance: new Date(dateEcheance).getTime(),
+            assigneA,
+            statut
         };
 
-        res.status(201).json({ todo: serializeBigInt(responseTodo) });
+        // Ajout de la tâche
+        const newTodo = await addTodo(todoData);
+
+        // Sérialiser la réponse pour gérer les BigInt
+        const serializedTodo = serializeBigInt(newTodo);
+
+        // Réponse avec la nouvelle tâche
+        res.status(201).json({ 
+            message: "Tâche ajoutée avec succès",
+            todo: serializedTodo 
+        });
+
     } catch (error) {
-        console.error("Erreur:", error);
-        res.status(500).json({ message: "Une erreur est survenue" });
+        console.error('Erreur lors de l\'ajout de la tâche:', error);
+        res.status(500).json({ message: error.message || "Une erreur est survenue lors de l'ajout de la tâche" });
     }
 });
 
@@ -329,6 +433,20 @@ router.get("/api/todo/:id/history", async (request, response) => {
     } catch (error) {
         console.error("Erreur lors de la récupération de l'historique:", error);
         return response.status(500).json({ error: "Erreur lors de la récupération de l'historique" });
+    }
+});
+
+// Route pour vérifier l'état d'authentification
+router.get("/api/check-auth", (request, response) => {
+    if (request.session.user) {
+        response.json({
+            isAuthenticated: true,
+            user: request.session.user
+        });
+    } else {
+        response.json({
+            isAuthenticated: false
+        });
     }
 });
 

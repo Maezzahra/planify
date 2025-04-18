@@ -68,67 +68,78 @@ export const getTodoHistory = async (todoId) => {
 
 /**
  * Add a todo
- * @param {string} title - Todo title
- * @param {string} description - Todo description
- * @param {string} priority - Priority (Faible, Moyenne, Élevée)
- * @param {BigInt} dueDate - Due date in milliseconds (EPOCH timestamp)
- * @param {string} assignedTo - Assigned team member
+ * @param {Object} todoData - Todo data
  * @returns {Promise<Object>} The created todo
  */
-export const addTodo = async (title, description, priority, dueDate, assignedTo, status) => {
-    // Check if status exists
-    const existingStatus = await prisma.statut.findUnique({
-        where: { nom: status }
-    });
-
-    if (!existingStatus) {
-        throw new Error(`Invalid status: ${status}`);
-    }
-
-    // Check if priority exists
-    const existingPriority = await prisma.priorite.findUnique({
-        where: { nom: priority }
-    });
-
-    if (!existingPriority) {
-        throw new Error(`Invalid priority: ${priority}`);
-    }
-
-    // Create the todo
-    const newTodo = await prisma.tache.create({
-        data: {
-            titre: title,
-            description,
-            statutId: existingStatus.id,
-            prioriteId: existingPriority.id,
-            dateEcheance: dueDate,
-            assigneA: assignedTo
-        },
-        include: {
-            statut: true,
-            priorite: true
+export const addTodo = async (todoData) => {
+    try {
+        // Vérifier si le statut existe et obtenir son ID
+        let statutId = todoData.statutId;
+        if (!statutId) {
+            const existingStatus = await prisma.statut.findUnique({
+                where: { nom: todoData.statut }
+            });
+            if (!existingStatus) {
+                throw new Error(`Statut invalide: ${todoData.statut}`);
+            }
+            statutId = existingStatus.id;
         }
-    });
 
-    // Create history entry
-    await prisma.historiqueTache.create({
-        data: {
-            tacheId: newTodo.id,
-            titre: newTodo.titre,
-            description: newTodo.description,
-            statut: existingStatus.nom,
-            priorite: existingPriority.nom,
-            dateEcheance: newTodo.dateEcheance,
-            assigneA: newTodo.assigneA,
-            typeChangement: 'CREATION'
+        // Vérifier si la priorité existe et obtenir son ID
+        let prioriteId = todoData.prioriteId;
+        if (!prioriteId) {
+            const existingPriority = await prisma.priorite.findUnique({
+                where: { nom: todoData.priorite }
+            });
+            if (!existingPriority) {
+                throw new Error(`Priorité invalide: ${todoData.priorite}`);
+            }
+            prioriteId = existingPriority.id;
         }
-    });
 
-    return {
-        ...newTodo,
-        statut: existingStatus.nom,
-        priorite: existingPriority.nom
-    };
+        // Convertir la date d'échéance en BigInt (timestamp)
+        const dateEcheance = todoData.dateEcheance ? BigInt(new Date(todoData.dateEcheance).getTime()) : null;
+
+        // Créer la tâche
+        const newTodo = await prisma.tache.create({
+            data: {
+                titre: todoData.titre,
+                description: todoData.description,
+                statutId: statutId,
+                prioriteId: prioriteId,
+                dateEcheance: dateEcheance,
+                assigneA: todoData.assigneA
+            },
+            include: {
+                statut: true,
+                priorite: true
+            }
+        });
+
+        // Créer l'entrée dans l'historique
+        await prisma.historiqueTache.create({
+            data: {
+                tacheId: newTodo.id,
+                titre: newTodo.titre,
+                description: newTodo.description,
+                statut: newTodo.statut.nom,
+                priorite: newTodo.priorite.nom,
+                dateEcheance: dateEcheance,
+                assigneA: newTodo.assigneA,
+                typeChangement: 'CREATION',
+                modifiePar: todoData.assigneA || 'système'
+            }
+        });
+
+        return {
+            ...newTodo,
+            statut: newTodo.statut.nom,
+            priorite: newTodo.priorite.nom
+        };
+    } catch (error) {
+        console.error("Erreur lors de l'ajout de la tâche:", error);
+        throw error;
+    }
 };
 
 /**

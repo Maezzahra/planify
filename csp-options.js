@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === "development") {
     frameAncestors: ["'self'"],
     imgSrc: ["'self'", "data:"],
     objectSrc: ["'none'"],
-    scriptSrc: ["'self'", "'nonce-browser-sync'"],
+    scriptSrc: ["'self'", "https://cdnjs.cloudflare.com"],
     scriptSrcAttr: ["'none'"],
     styleSrc: ["'self'", "https:", "'unsafe-inline'"],
     upgradeInsecureRequests: [],

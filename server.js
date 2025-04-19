@@ -1,12 +1,5 @@
 import "dotenv/config";
 
-import https from 'node:https';
-import { readFile } from 'node:fs/promises';
-
-//importer les routes
-import routerExterne from "./routes.js";
-
-// Importation des fichiers et librairies
 import { engine } from "express-handlebars";
 import express, { json } from "express";
 import helmet from "helmet";
@@ -16,27 +9,24 @@ import cspOption from "./csp-options.js";
 
 // Importation de la session
 import session from "express-session";
-// Importation de la base de données de session
 import memorystore from "memorystore";
 import passport from "passport";
 
+import routerExterne from "./routes.js";
 import "./authentification.js";
 
 // Création du serveur express
 const app = express();
 
-//initialisation de la base de données de session
+// Initialisation de la base de données de session
 const MemoryStore = memorystore(session);
 
+// Configuration du moteur de vue handlebars avec helpers personnalisés
 app.engine("handlebars", engine({
     helpers: {
-        eq: function (v1, v2) {
-            return v1 === v2;
-        },
-        toLowerCase: function(str) {
-            return str.toLowerCase();
-        },
-        formatDate: function(timestamp) {
+        eq: (v1, v2) => v1 === v2,
+        toLowerCase: str => str.toLowerCase(),
+        formatDate: (timestamp) => {
             if (!timestamp) return '';
             const date = new Date(Number(timestamp));
             return date.toLocaleString('fr-FR', {
@@ -47,9 +37,8 @@ app.engine("handlebars", engine({
                 minute: '2-digit'
             });
         },
-        formatDateForInput: function(date) {
+        formatDateForInput: (date) => {
             if (!date) return '';
-            // Convertir BigInt en nombre si nécessaire
             const timestamp = typeof date === 'bigint' ? Number(date) : date;
             const d = new Date(timestamp);
             const year = d.getFullYear();
@@ -60,19 +49,18 @@ app.engine("handlebars", engine({
             return `${year}-${month}-${day}T${hours}:${minutes}`;
         }
     }
-})); 
-app.set("view engine", "handlebars");// Pour indiquer que les vues seront des fichiers .handlebars
-app.set("views", "./views"); // Pour indique le dossier contenant les vues
+}));
+app.set("view engine", "handlebars");
+app.set("views", "./views");
 
-// Ajout de middlewares
+// Middlewares de sécurité et performance
 app.use(helmet(cspOption));
 app.use(compression());
 app.use(cors());
 app.use(json());
 
-//Ajout des middlewares pour gérer les sessions
-app.use(
-    session({
+// Middleware de session
+app.use(session({
     cookie: { maxAge: 3600000 },
     name: process.env.npm_package_name,
     store: new MemoryStore({ checkPeriod: 3600000 }),
@@ -81,34 +69,24 @@ app.use(
     secret: process.env.SESSION_SECRET
 }));
 
-//Middleware pour gerer passport
+// Middleware de Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Fichiers statiques
 app.use(express.static("public"));
 
-// Ajout des routes
+// Routes
 app.use(routerExterne);
 
-// Renvoyer une erreur 404 pour les routes non définies
+// Erreur 404
 app.use((request, response) => {
-    // Renvoyer simplement une chaîne de caractère indiquant que la page n'existe pas
     response.status(404).send(`${request.originalUrl} Route introuvable.`);
 });
 
-//Demarrer le serveur
-//Usage du HTTPS
-if (process.env.NODE_ENV === "development") {
-    let credentials = {
-        key: await readFile("./security/localhost.key"),
-        cert: await readFile("./security/localhost.cert"),
-    };
+// Démarrage du serveur
+const PORT = process.env.PORT || 5000;
 
-    https.createServer(credentials, app).listen(process.env.PORT, '0.0.0.0', () => {
-        console.info(`Serveur démarré avec succès : https://localhost:${process.env.PORT}`);
-    });
-} else {
-    app.listen(process.env.PORT, '0.0.0.0', () => {
-        console.info(`Serveur démarré avec succès : http://0.0.0.0:${process.env.PORT}`);
-    });
-}
+app.listen(PORT, '0.0.0.0', () => {
+    console.info(`Serveur démarré avec succès sur http://0.0.0.0:${PORT}`);
+});
